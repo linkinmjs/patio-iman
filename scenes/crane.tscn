@@ -1,0 +1,108 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/crane.gd" id="1_crane"]
+
+[sub_resource type="StandardMaterial3D" id="mat_acero"]
+albedo_color = Color(0.78, 0.62, 0.14, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="mat_oscuro"]
+albedo_color = Color(0.25, 0.26, 0.3, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="mat_iman"]
+albedo_color = Color(0.55, 0.15, 0.12, 1)
+roughness = 0.5
+
+[sub_resource type="SphereShape3D" id="shape_consola"]
+radius = 2.0
+
+[node name="Grua" type="Node3D"]
+script = ExtResource("1_crane")
+
+[node name="RielOeste" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.2, 0)
+use_collision = true
+size = Vector3(0.6, 0.4, 52)
+material = SubResource("mat_oscuro")
+
+[node name="RielEste" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.2, 0)
+use_collision = true
+size = Vector3(0.6, 0.4, 52)
+material = SubResource("mat_oscuro")
+
+[node name="Puente" type="Node3D" parent="."]
+
+[node name="PataOeste" type="CSGBox3D" parent="Puente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 4.2, 0)
+use_collision = true
+size = Vector3(0.7, 7.6, 0.7)
+material = SubResource("mat_acero")
+
+[node name="PataEste" type="CSGBox3D" parent="Puente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 4.2, 0)
+use_collision = true
+size = Vector3(0.7, 7.6, 0.7)
+material = SubResource("mat_acero")
+
+[node name="Viga" type="CSGBox3D" parent="Puente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.2, 0)
+use_collision = true
+size = Vector3(29.5, 0.8, 1)
+material = SubResource("mat_acero")
+
+[node name="Carro" type="Node3D" parent="Puente"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.6, 0)
+
+[node name="CarroVisual" type="CSGBox3D" parent="Puente/Carro"]
+use_collision = true
+size = Vector3(1.4, 0.6, 1.4)
+material = SubResource("mat_oscuro")
+
+[node name="Cable" type="CSGCylinder3D" parent="Puente/Carro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+radius = 0.05
+height = 3.0
+material = SubResource("mat_oscuro")
+
+[node name="Iman" type="Node3D" parent="Puente/Carro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+
+[node name="ImanVisual" type="CSGCylinder3D" parent="Puente/Carro/Iman"]
+use_collision = true
+radius = 0.9
+height = 0.45
+material = SubResource("mat_iman")
+
+[node name="CamYaw" type="Node3D" parent="Puente/Carro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="CamPitch" type="Node3D" parent="Puente/Carro/CamYaw"]
+transform = Transform3D(1, 0, 0, 0, 0.825336, 0.564642, 0, -0.564642, 0.825336, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Puente/Carro/CamYaw/CamPitch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9)
+fov = 70.0
+
+[node name="Consola" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 20)
+
+[node name="Gabinete" type="CSGBox3D" parent="Consola"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.575, 0)
+use_collision = true
+size = Vector3(0.7, 1.15, 0.45)
+material = SubResource("mat_oscuro")
+
+[node name="Label3D" type="Label3D" parent="Consola"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+billboard = 1
+text = "Operar grúa [E]"
+font_size = 48
+outline_size = 8
+
+[node name="Area3D" type="Area3D" parent="Consola"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Consola/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_consola")

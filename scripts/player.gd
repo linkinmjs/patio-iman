@@ -21,12 +21,21 @@ const MAX_PITCH := 1.5  # ~86°, evita gimbal en el cenit
 
 @onready var head: Node3D = $Head
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
+@onready var camera: Camera3D = $Head/Camera3D
 
 var _pitch := 0.0
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Habilita/deshabilita el control del jugador (p. ej. al entrar al modo grúa).
+func set_control_enabled(enabled: bool) -> void:
+	set_physics_process(enabled)
+	set_process_unhandled_input(enabled)
+	if enabled:
+		camera.current = true
 
 
 func _unhandled_input(event: InputEvent) -> void:

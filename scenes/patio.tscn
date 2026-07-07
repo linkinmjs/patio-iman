@@ -1,6 +1,8 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_playr"]
+[ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="2_grua"]
+[ext_resource type="PackedScene" path="res://scenes/tractor_crane.tscn" id="3_gruam"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -106,3 +108,8 @@ material = SubResource("mat_amarillo")
 
 [node name="Player" parent="." instance=ExtResource("1_playr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 10)
+
+[node name="Grua" parent="." instance=ExtResource("2_grua")]
+
+[node name="GruaMovil" parent="." instance=ExtResource("3_gruam")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.05, 14)
