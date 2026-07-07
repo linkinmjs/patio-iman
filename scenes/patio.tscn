@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_playr"]
 [ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="2_grua"]
 [ext_resource type="PackedScene" path="res://scenes/tractor_crane.tscn" id="3_gruam"]
+[ext_resource type="PackedScene" path="res://scenes/car.tscn" id="4_auto"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -113,3 +114,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 10)
 
 [node name="GruaMovil" parent="." instance=ExtResource("3_gruam")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.05, 14)
+
+[node name="Auto1" parent="." instance=ExtResource("4_auto")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.4, -9)
+
+[node name="Auto2" parent="." instance=ExtResource("4_auto")]
+transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, 3, 0.4, -13)
+
+[node name="Auto3" parent="." instance=ExtResource("4_auto")]
+transform = Transform3D(0.62161, 0, -0.783327, 0, 1, 0, 0.783327, 0, 0.62161, -9, 0.4, -8)
+
+[node name="Auto4" parent="." instance=ExtResource("4_auto")]
+transform = Transform3D(-0.666276, 0, 0.745705, 0, 1, 0, -0.745705, 0, -0.666276, 1, 0.4, -4)

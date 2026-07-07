@@ -28,6 +28,7 @@ extends Node3D
 @onready var camera: Camera3D = $Puente/Carro/CamYaw/CamPitch/Camera3D
 @onready var console_area: Area3D = $Consola/Area3D
 @onready var console_label: Label3D = $Consola/Label3D
+@onready var hud: CanvasLayer = $HUD
 
 var active := false
 
@@ -101,6 +102,7 @@ func _update_cable() -> void:
 func _enter() -> void:
 	active = true
 	console_label.visible = false
+	hud.visible = true
 	_velocity = Vector3.ZERO
 	_player.set_control_enabled(false)
 	camera.current = true
@@ -110,6 +112,7 @@ func _enter() -> void:
 func _exit() -> void:
 	active = false
 	console_label.visible = _player_near
+	hud.visible = false
 	_player.set_control_enabled(true)
 
 

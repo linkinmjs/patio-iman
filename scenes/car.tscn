@@ -1,0 +1,74 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="PhysicsMaterial" id="fis_auto"]
+friction = 1.0
+bounce = 0.0
+
+[sub_resource type="BoxShape3D" id="shape_cuerpo"]
+size = Vector3(1.8, 1.1, 4.4)
+
+[sub_resource type="BoxShape3D" id="shape_cabina"]
+size = Vector3(1.6, 0.6, 2)
+
+[sub_resource type="StandardMaterial3D" id="mat_chapa"]
+albedo_color = Color(0.35, 0.45, 0.55, 1)
+roughness = 0.75
+
+[sub_resource type="StandardMaterial3D" id="mat_vidrio"]
+albedo_color = Color(0.55, 0.6, 0.65, 1)
+roughness = 0.35
+
+[sub_resource type="StandardMaterial3D" id="mat_rueda"]
+albedo_color = Color(0.12, 0.12, 0.13, 1)
+roughness = 0.95
+
+[node name="Auto" type="RigidBody3D" groups=["auto"]]
+mass = 1100.0
+physics_material_override = SubResource("fis_auto")
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 0.4, 0)
+continuous_cd = true
+linear_damp = 0.2
+angular_damp = 2.0
+
+[node name="Cuerpo" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+shape = SubResource("shape_cuerpo")
+
+[node name="Cabina" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0.3)
+shape = SubResource("shape_cabina")
+
+[node name="Carroceria" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+size = Vector3(1.8, 0.7, 4.4)
+material = SubResource("mat_chapa")
+
+[node name="CabinaVisual" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0.3)
+size = Vector3(1.6, 0.6, 2.2)
+material = SubResource("mat_vidrio")
+
+[node name="RuedaDelIzq" type="CSGCylinder3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.85, 0.35, -1.45)
+radius = 0.35
+height = 0.25
+material = SubResource("mat_rueda")
+
+[node name="RuedaDelDer" type="CSGCylinder3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.85, 0.35, -1.45)
+radius = 0.35
+height = 0.25
+material = SubResource("mat_rueda")
+
+[node name="RuedaTrasIzq" type="CSGCylinder3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.85, 0.35, 1.45)
+radius = 0.35
+height = 0.25
+material = SubResource("mat_rueda")
+
+[node name="RuedaTrasDer" type="CSGCylinder3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.85, 0.35, 1.45)
+radius = 0.35
+height = 0.25
+material = SubResource("mat_rueda")

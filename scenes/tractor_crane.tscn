@@ -125,3 +125,20 @@ outline_size = 8
 
 [node name="PuntoBajada" type="Marker3D" parent="Acceso"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.05, 0)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Controles" type="Label" parent="HUD"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -100.0
+offset_right = 620.0
+offset_bottom = -16.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+text = "W/S manejar · A/D girar · Q/E bajar/subir brazo
+La torreta sigue tu mirada · Click der. precisión
+Tab — Bajarse"

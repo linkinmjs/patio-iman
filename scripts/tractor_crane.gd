@@ -30,6 +30,7 @@ extends CharacterBody3D
 @onready var board_area: Area3D = $Acceso/Area3D
 @onready var board_label: Label3D = $Acceso/Label3D
 @onready var exit_point: Marker3D = $Acceso/PuntoBajada
+@onready var hud: CanvasLayer = $HUD
 
 var active := false
 
@@ -111,6 +112,7 @@ func _process_controls(delta: float) -> void:
 func _enter() -> void:
 	active = true
 	board_label.visible = false
+	hud.visible = true
 	_player.set_control_enabled(false)
 	_player.process_mode = Node.PROCESS_MODE_DISABLED
 	camera.current = true
@@ -119,6 +121,7 @@ func _enter() -> void:
 
 func _exit() -> void:
 	active = false
+	hud.visible = false
 	_player.global_position = exit_point.global_position
 	_player.velocity = Vector3.ZERO
 	_player.process_mode = Node.PROCESS_MODE_INHERIT
