@@ -13,7 +13,6 @@ extends Node3D
 @export_group("Límites")
 @export var trolley_x_range := Vector2(-12.0, 12.0)
 @export var bridge_z_range := Vector2(-22.0, 22.0)
-@export var hoist_y_range := Vector2(-6.9, -0.8)
 
 @export_group("Cámara")
 @export var mouse_sensitivity := 0.0025
@@ -21,8 +20,7 @@ extends Node3D
 
 @onready var bridge: Node3D = $Puente
 @onready var trolley: Node3D = $Puente/Carro
-@onready var magnet: Node3D = $Puente/Carro/Iman
-@onready var cable: CSGCylinder3D = $Puente/Carro/Cable
+@onready var hanging: Node3D = $Puente/Carro/HangingMagnet
 @onready var cam_yaw: Node3D = $Puente/Carro/CamYaw
 @onready var cam_pitch: Node3D = $Puente/Carro/CamYaw/CamPitch
 @onready var camera: Camera3D = $Puente/Carro/CamYaw/CamPitch/Camera3D
@@ -42,7 +40,6 @@ func _ready() -> void:
 	console_area.body_entered.connect(_on_console_body_entered)
 	console_area.body_exited.connect(_on_console_body_exited)
 	console_label.visible = false
-	_update_cable()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -75,6 +72,11 @@ func _process_controls(delta: float) -> void:
 		_exit()
 		return
 
+	if Input.is_action_just_pressed("magnet_toggle"):
+		hanging.toggle_magnet()
+	elif Input.is_action_just_pressed("magnet_release"):
+		hanging.release()
+
 	var factor := precision_factor if Input.is_action_pressed("precision") else 1.0
 	var target := Vector3(
 			Input.get_axis("move_left", "move_right") * trolley_speed,
@@ -84,19 +86,13 @@ func _process_controls(delta: float) -> void:
 
 	trolley.position.x = clampf(
 			trolley.position.x + _velocity.x * delta, trolley_x_range.x, trolley_x_range.y)
-	magnet.position.y = clampf(
-			magnet.position.y + _velocity.y * delta, hoist_y_range.x, hoist_y_range.y)
+	hanging.cable_length = clampf(
+			hanging.cable_length - _velocity.y * delta,
+			hanging.cable_length_range.x, hanging.cable_length_range.y)
 	bridge.position.z = clampf(
 			bridge.position.z + _velocity.z * delta, bridge_z_range.x, bridge_z_range.y)
 
 	camera.position.z = lerpf(camera.position.z, _zoom, 8.0 * delta)
-	_update_cable()
-
-
-func _update_cable() -> void:
-	var length := absf(magnet.position.y)
-	cable.height = length
-	cable.position.y = -length * 0.5
 
 
 func _enter() -> void:

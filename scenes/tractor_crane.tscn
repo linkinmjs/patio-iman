@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/tractor_crane.gd" id="1_tcrane"]
+[ext_resource type="PackedScene" path="res://scenes/hanging_magnet.tscn" id="2_iman"]
 
 [sub_resource type="StandardMaterial3D" id="mat_amarillo"]
 albedo_color = Color(0.78, 0.62, 0.14, 1)
@@ -14,12 +15,14 @@ roughness = 0.85
 albedo_color = Color(0.3, 0.42, 0.52, 1)
 roughness = 0.3
 
-[sub_resource type="StandardMaterial3D" id="mat_iman"]
-albedo_color = Color(0.55, 0.15, 0.12, 1)
-roughness = 0.5
-
 [sub_resource type="BoxShape3D" id="shape_chasis"]
 size = Vector3(2.6, 2.4, 4.4)
+
+[sub_resource type="BoxShape3D" id="shape_brazo"]
+size = Vector3(0.5, 0.6, 4.5)
+
+[sub_resource type="BoxShape3D" id="shape_antebrazo"]
+size = Vector3(0.4, 0.5, 3.5)
 
 [sub_resource type="SphereShape3D" id="shape_acceso"]
 radius = 1.9
@@ -72,6 +75,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.25)
 size = Vector3(0.5, 0.6, 4.5)
 material = SubResource("mat_amarillo")
 
+[node name="BrazoCol" type="AnimatableBody3D" parent="Torreta/BoomPivot"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Torreta/BoomPivot/BrazoCol"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.25)
+shape = SubResource("shape_brazo")
+
 [node name="Codo" type="Node3D" parent="Torreta/BoomPivot"]
 transform = Transform3D(1, 0, 0, 0, 0.453596, 0.891207, 0, -0.891207, 0.453596, 0, 0, -4.5)
 
@@ -80,24 +91,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.75)
 size = Vector3(0.4, 0.5, 3.5)
 material = SubResource("mat_amarillo")
 
+[node name="AntebrazoCol" type="AnimatableBody3D" parent="Torreta/BoomPivot/Codo"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Torreta/BoomPivot/Codo/AntebrazoCol"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.75)
+shape = SubResource("shape_antebrazo")
+
 [node name="Punta" type="Marker3D" parent="Torreta/BoomPivot/Codo"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
 
-[node name="Colgante" type="Node3D" parent="."]
-top_level = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -5)
-
-[node name="Cable" type="CSGCylinder3D" parent="Colgante"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6, 0)
-radius = 0.04
-height = 1.2
-material = SubResource("mat_oscuro")
-
-[node name="Iman" type="CSGCylinder3D" parent="Colgante"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.35, 0)
-radius = 0.8
-height = 0.4
-material = SubResource("mat_iman")
+[node name="HangingMagnet" parent="Torreta/BoomPivot/Codo/Punta" instance=ExtResource("2_iman")]
+cable_length = 1.5
+cable_length_range = Vector2(1.5, 1.5)
 
 [node name="CamYaw" type="Node3D" parent="Torreta"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.35, -0.75)
@@ -140,5 +147,6 @@ offset_bottom = -16.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 text = "W/S manejar · A/D girar · Q/E bajar/subir brazo
+Click izq. imán ON/OFF · Espacio soltar
 La torreta sigue tu mirada · Click der. precisión
 Tab — Bajarse"

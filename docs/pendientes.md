@@ -1,0 +1,1 @@
+- Dar un poco de feel de "tanque de guerra" al manejar la grúa. Para ello podemos trabajar sobre la tracción para que empuje autos y que pueda pasar por encima de determinados obstáculos.

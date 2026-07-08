@@ -23,6 +23,7 @@ albedo_color = Color(0.12, 0.12, 0.13, 1)
 roughness = 0.95
 
 [node name="Auto" type="RigidBody3D" groups=["auto"]]
+collision_mask = 3
 mass = 1100.0
 physics_material_override = SubResource("fis_auto")
 center_of_mass_mode = 1

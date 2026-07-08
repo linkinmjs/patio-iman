@@ -22,8 +22,7 @@ extends CharacterBody3D
 
 @onready var turret: Node3D = $Torreta
 @onready var boom_pivot: Node3D = $Torreta/BoomPivot
-@onready var tip: Marker3D = $Torreta/BoomPivot/Codo/Punta
-@onready var hanger: Node3D = $Colgante
+@onready var hanging: Node3D = $Torreta/BoomPivot/Codo/Punta/HangingMagnet
 @onready var cam_yaw: Node3D = $Torreta/CamYaw
 @onready var cam_pitch: Node3D = $Torreta/CamYaw/CamPitch
 @onready var camera: Camera3D = $Torreta/CamYaw/CamPitch/Camera3D
@@ -77,14 +76,16 @@ func _physics_process(delta: float) -> void:
 	velocity.z = forward.z * _speed
 	move_and_slide()
 
-	# El imán cuelga siempre vertical desde la punta del brazo.
-	hanger.global_position = tip.global_position
-
 
 func _process_controls(delta: float) -> void:
 	if Input.is_action_just_pressed("exit_mode"):
 		_exit()
 		return
+
+	if Input.is_action_just_pressed("magnet_toggle"):
+		hanging.toggle_magnet()
+	elif Input.is_action_just_pressed("magnet_release"):
+		hanging.release()
 
 	var factor := precision_factor if Input.is_action_pressed("precision") else 1.0
 

@@ -1,6 +1,7 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/crane.gd" id="1_crane"]
+[ext_resource type="PackedScene" path="res://scenes/hanging_magnet.tscn" id="2_iman"]
 
 [sub_resource type="StandardMaterial3D" id="mat_acero"]
 albedo_color = Color(0.78, 0.62, 0.14, 1)
@@ -9,10 +10,6 @@ roughness = 0.6
 [sub_resource type="StandardMaterial3D" id="mat_oscuro"]
 albedo_color = Color(0.25, 0.26, 0.3, 1)
 roughness = 0.8
-
-[sub_resource type="StandardMaterial3D" id="mat_iman"]
-albedo_color = Color(0.55, 0.15, 0.12, 1)
-roughness = 0.5
 
 [sub_resource type="SphereShape3D" id="shape_consola"]
 radius = 2.0
@@ -60,20 +57,9 @@ use_collision = true
 size = Vector3(1.4, 0.6, 1.4)
 material = SubResource("mat_oscuro")
 
-[node name="Cable" type="CSGCylinder3D" parent="Puente/Carro"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
-radius = 0.05
-height = 3.0
-material = SubResource("mat_oscuro")
-
-[node name="Iman" type="Node3D" parent="Puente/Carro"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
-
-[node name="ImanVisual" type="CSGCylinder3D" parent="Puente/Carro/Iman"]
-use_collision = true
-radius = 0.9
-height = 0.45
-material = SubResource("mat_iman")
+[node name="HangingMagnet" parent="Puente/Carro" instance=ExtResource("2_iman")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.35, 0)
+cable_length = 3.5
 
 [node name="CamYaw" type="Node3D" parent="Puente/Carro"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
@@ -121,5 +107,6 @@ offset_bottom = -16.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 text = "W/S puente · A/D carro · Q/E bajar/subir imán
+Click izq. imán ON/OFF · Espacio soltar
 Click der. precisión · Rueda zoom
 Tab — Bajar de la grúa"
