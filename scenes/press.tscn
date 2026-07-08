@@ -1,0 +1,89 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/press.gd" id="1_press"]
+
+[sub_resource type="StandardMaterial3D" id="mat_estructura"]
+albedo_color = Color(0.3, 0.32, 0.36, 1)
+roughness = 0.75
+
+[sub_resource type="StandardMaterial3D" id="mat_placa"]
+albedo_color = Color(0.85, 0.55, 0.1, 1)
+roughness = 0.5
+metallic = 0.3
+
+[sub_resource type="StandardMaterial3D" id="mat_oscuro"]
+albedo_color = Color(0.25, 0.26, 0.3, 1)
+roughness = 0.8
+
+[sub_resource type="BoxShape3D" id="shape_slot"]
+size = Vector3(2.8, 3.0, 5.4)
+
+[sub_resource type="SphereShape3D" id="shape_consola"]
+radius = 2.0
+
+[sub_resource type="BoxShape3D" id="shape_gabinete"]
+size = Vector3(0.7, 1.15, 0.45)
+
+[node name="Prensa" type="Node3D"]
+script = ExtResource("1_press")
+
+[node name="Tolva" type="Node3D" parent="."]
+
+[node name="ParedIzq" type="CSGBox3D" parent="Tolva"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.4, 0)
+use_collision = true
+size = Vector3(0.3, 2.8, 5.4)
+material = SubResource("mat_estructura")
+
+[node name="ParedDer" type="CSGBox3D" parent="Tolva"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.4, 0)
+use_collision = true
+size = Vector3(0.3, 2.8, 5.4)
+material = SubResource("mat_estructura")
+
+[node name="ParedFondo" type="CSGBox3D" parent="Tolva"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, -2.85)
+use_collision = true
+size = Vector3(2.9, 2.8, 0.3)
+material = SubResource("mat_estructura")
+
+[node name="ParedFrente" type="CSGBox3D" parent="Tolva"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 2.85)
+use_collision = true
+size = Vector3(2.9, 2.8, 0.3)
+material = SubResource("mat_estructura")
+
+[node name="SlotDetector" type="Area3D" parent="Tolva"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tolva/SlotDetector"]
+shape = SubResource("shape_slot")
+
+[node name="Placa" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, 0)
+size = Vector3(2.6, 0.4, 5.2)
+material = SubResource("mat_placa")
+
+[node name="Consola" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
+
+[node name="Gabinete" type="CSGBox3D" parent="Consola"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.575, 0)
+use_collision = true
+size = Vector3(0.7, 1.15, 0.45)
+material = SubResource("mat_oscuro")
+
+[node name="Label3D" type="Label3D" parent="Consola"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+billboard = 1
+text = "Prensa vacía"
+font_size = 48
+outline_size = 8
+
+[node name="Area3D" type="Area3D" parent="Consola"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Consola/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_consola")

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="2_grua"]
 [ext_resource type="PackedScene" path="res://scenes/tractor_crane.tscn" id="3_gruam"]
 [ext_resource type="PackedScene" path="res://scenes/car.tscn" id="4_auto"]
+[ext_resource type="PackedScene" path="res://scenes/press.tscn" id="5_prensa"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -126,3 +127,6 @@ transform = Transform3D(0.62161, 0, -0.783327, 0, 1, 0, 0.783327, 0, 0.62161, -9
 
 [node name="Auto4" parent="." instance=ExtResource("4_auto")]
 transform = Transform3D(-0.666276, 0, 0.745705, 0, 1, 0, -0.745705, 0, -0.666276, 1, 0.4, -4)
+
+[node name="Prensa" parent="." instance=ExtResource("5_prensa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -18)
