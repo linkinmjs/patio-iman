@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
+[ext_resource type="Script" path="res://scripts/car.gd" id="1_car"]
 [ext_resource type="Material" path="res://assets/materials/greybox_blue_grid.tres" id="1_mblue"]
 [ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
 
@@ -26,6 +27,8 @@ center_of_mass = Vector3(0, 0.4, 0)
 continuous_cd = true
 linear_damp = 0.2
 angular_damp = 2.0
+script = ExtResource("1_car")
+metadata/grab_top_y = 1.4
 
 [node name="Cuerpo" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)

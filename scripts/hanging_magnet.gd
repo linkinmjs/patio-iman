@@ -2,8 +2,8 @@ extends Node3D
 ## Imán electromagnético colgante con lógica de péndulo. Componente compartido:
 ## el nodo raíz es el pivote (lo mueve la grúa que lo instancia) y el imán
 ## cuelga debajo balanceándose según la aceleración del pivote.
-## Energizado (LMB) atrae el auto más cercano bajo el disco y lo captura;
-## release() lo suelta heredando la velocidad del balanceo.
+## Energizado (LMB) atrae el auto o bloque de chatarra más cercano bajo el
+## disco y lo captura; release() lo suelta heredando la velocidad del balanceo.
 ## El imán tiene rumbo (yaw) propio: sigue hacia donde apunta la grúa que lo
 ## cuelga y admite rotación manual (rotate_carried); el auto capturado cuelga
 ## nivelado y gira junto con ese rumbo.
@@ -24,10 +24,9 @@ signal car_released(car: RigidBody3D)
 @export var capture_distance := 0.9
 @export var rotate_speed := 1.2  # rad/s de rotación manual del auto colgado
 
-## Del centro del imán al origen del auto colgado (techo pegado al disco).
-const CAR_HANG_OFFSET := Vector3(0, -1.85, 0)
-## Del origen del auto a su techo, donde "muerde" la fuerza magnética.
-const ROOF_OFFSET := Vector3(0, 1.4, 0)
+## Luz vertical entre el centro del imán y la cara de agarre del cuerpo
+## (media altura del disco + aire).
+const HANG_CLEARANCE := 0.45
 
 var energized := false
 var carried: RigidBody3D = null
@@ -101,8 +100,9 @@ func _physics_process(delta: float) -> void:
 	cable.height = pivot.distance_to(bob)
 
 	if carried:
+		var hang := Vector3(0, -(HANG_CLEARANCE + _grab_top(carried)), 0)
 		carried.global_transform = Transform3D(
-				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * CAR_HANG_OFFSET)
+				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * hang)
 	elif energized:
 		_attract()
 
@@ -112,7 +112,8 @@ func _attract() -> void:
 	var best: RigidBody3D = null
 	var best_dist := INF
 	for candidate in detector.get_overlapping_bodies():
-		if candidate is RigidBody3D and candidate.is_in_group("auto") and not candidate.freeze:
+		if candidate is RigidBody3D and not candidate.freeze \
+				and (candidate.is_in_group("auto") or candidate.is_in_group("chatarra")):
 			var dist: float = candidate.global_position.distance_to(bottom)
 			if dist < best_dist:
 				best_dist = dist
@@ -124,12 +125,13 @@ func _attract() -> void:
 	# Mismo cálculo que la posición de enganche real (rotada por la inclinación
 	# del péndulo); si no coinciden, el auto puede "aprobar" el chequeo estando
 	# lejos del punto donde en verdad va a aparecer al capturarlo.
-	var hang_target: Vector3 = magnet_body.global_position + magnet_body.global_basis * CAR_HANG_OFFSET
+	var hang_target: Vector3 = magnet_body.global_position \
+			+ magnet_body.global_basis * Vector3(0, -(HANG_CLEARANCE + _grab_top(best)), 0)
 	if best.global_position.distance_to(hang_target) < capture_distance:
 		_capture(best)
 	else:
-		var roof: Vector3 = best.global_position + best.global_basis * ROOF_OFFSET
-		var dir: Vector3 = (bottom - roof).normalized()
+		var top: Vector3 = best.global_position + best.global_basis * Vector3(0, _grab_top(best), 0)
+		var dir: Vector3 = (bottom - top).normalized()
 		best.apply_central_force(dir * pull_accel * best.mass)
 
 
@@ -149,6 +151,12 @@ func _capture(car: RigidBody3D) -> void:
 ## Gira el auto colgado alrededor del cable. axis > 0 = antihorario.
 func rotate_carried(axis: float, delta: float) -> void:
 	_yaw_manual += axis * rotate_speed * delta
+
+
+## Altura de la cara de agarre sobre el origen del cuerpo. Cada escena
+## imantable la declara en su meta "grab_top_y" (auto 1.4, bloque 0.9).
+static func _grab_top(body: RigidBody3D) -> float:
+	return float(body.get_meta("grab_top_y", 1.4))
 
 
 func _magnet_yaw() -> float:

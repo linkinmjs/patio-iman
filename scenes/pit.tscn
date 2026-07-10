@@ -1,0 +1,59 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/sell_zone.gd" id="1_zona"]
+[ext_resource type="Material" path="res://assets/materials/greybox_purple_solid.tres" id="2_mpurple"]
+
+[sub_resource type="StandardMaterial3D" id="mat_fondo"]
+albedo_color = Color(0.05, 0.04, 0.07, 1)
+roughness = 1.0
+
+[sub_resource type="BoxShape3D" id="shape_pozo"]
+size = Vector3(2, 1.6, 2)
+
+[node name="Pozo" type="Node3D"]
+script = ExtResource("1_zona")
+accepted_group = "parte"
+
+[node name="Fondo" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.011, 0)
+size = Vector3(2.2, 0.02, 2.2)
+material = SubResource("mat_fondo")
+
+[node name="BordeNorte" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, -1.2)
+use_collision = true
+size = Vector3(2.8, 0.18, 0.3)
+material = ExtResource("2_mpurple")
+
+[node name="BordeSur" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 1.2)
+use_collision = true
+size = Vector3(2.8, 0.18, 0.3)
+material = ExtResource("2_mpurple")
+
+[node name="BordeEste" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0.09, 0)
+use_collision = true
+size = Vector3(0.3, 0.18, 2.2)
+material = ExtResource("2_mpurple")
+
+[node name="BordeOeste" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0.09, 0)
+use_collision = true
+size = Vector3(0.3, 0.18, 2.2)
+material = ExtResource("2_mpurple")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("shape_pozo")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+billboard = 1
+text = "Pozo de piezas"
+font_size = 48
+outline_size = 8

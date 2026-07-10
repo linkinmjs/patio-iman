@@ -1,10 +1,13 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_playr"]
 [ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="2_grua"]
 [ext_resource type="PackedScene" path="res://scenes/tractor_crane.tscn" id="3_gruam"]
 [ext_resource type="PackedScene" path="res://scenes/car.tscn" id="4_auto"]
 [ext_resource type="PackedScene" path="res://scenes/press.tscn" id="5_prensa"]
+[ext_resource type="PackedScene" path="res://scenes/load_zone.tscn" id="10_zona"]
+[ext_resource type="PackedScene" path="res://scenes/pit.tscn" id="11_pozo"]
+[ext_resource type="Script" path="res://scripts/money_hud.gd" id="12_mhud"]
 [ext_resource type="Material" path="res://assets/materials/greybox_grey_grid.tres" id="6_mgrey"]
 [ext_resource type="Material" path="res://assets/materials/greybox_dark_grid.tres" id="7_mdark"]
 [ext_resource type="Material" path="res://assets/materials/greybox_orange_grid.tres" id="8_morange"]
@@ -118,3 +121,20 @@ transform = Transform3D(-0.666276, 0, 0.745705, 0, 1, 0, -0.745705, 0, -0.666276
 
 [node name="Prensa" parent="." instance=ExtResource("5_prensa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -18)
+
+[node name="ZonaCarga" parent="." instance=ExtResource("10_zona")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -18)
+
+[node name="Pozo" parent="." instance=ExtResource("11_pozo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -14)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Dinero" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 240.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 26
+text = "$ 0"
+script = ExtResource("12_mhud")

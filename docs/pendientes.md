@@ -1,3 +1,4 @@
 - Dar un poco de feel de "tanque de guerra" al manejar la grúa. **Parcial**: la grúa ahora empuja autos con fuerza al avanzar (tracción). Falta: poder pasar por encima de determinados obstáculos.
-- ~~Bug, al avanzar sobre un auto, la grúa se bloquea de manera que es muy difícil empujarlo, ni se mueve.~~ **Resuelto**: `move_and_slide` no transfiere fuerza a los RigidBody por sí solo; ahora la grúa aplica fuerza de empuje en cada contacto (`push_accel` exportado para tunear).
-- ~~Bug, al soltar y agarrar varias veces un auto, se lo ve como si estuviera imantado un poco separado del imán.~~ **Resuelto**: el auto heredaba la inclinación completa con la que estaba apoyado al capturarlo (quedaba colgado torcido, con hueco contra el disco). Ahora solo conserva el rumbo (yaw) y cuelga siempre nivelado, techo contra el imán.
+- El "pozo de piezas" es un placeholder estilo *berry bury berry*: eventualmente será "algo" más relevante y con más sentido (¿mesa de despiece, comprador, depósito?).
+- Progresión de looteo (talentos o herramientas) para mejorar eficacia y velocidad de extracción de partes: cantidad de partes, chance de catalizador, tiempo de looteo.
+- Los autos ya looteados no cambian visualmente; estaría bueno un feedback (capó abierto, color más apagado).

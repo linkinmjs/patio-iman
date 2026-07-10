@@ -1,9 +1,13 @@
 extends Node3D
 ## Prensa compactadora. Se opera desde la consola (E), fuera de la tolva.
 ## Solo compacta si el auto adentro está detenido, centrado y erguido; si no,
-## el prompt avisa que hay que acomodarlo mejor.
+## el prompt avisa que hay que acomodarlo mejor. Al terminar, el auto se
+## reemplaza por un bloque de chatarra (scrap_block) que el imán puede llevar
+## a la zona de carga.
 
-signal car_compacted(car: RigidBody3D)
+signal car_compacted(block: RigidBody3D)
+
+const ScrapBlockScene := preload("res://scenes/scrap_block.tscn")
 
 @export_group("Criterio de acomodo")
 @export var max_offset := 1.0
@@ -13,8 +17,10 @@ signal car_compacted(car: RigidBody3D)
 @export_group("Compactación")
 @export var compaction_time := 15.0
 @export var plate_top_y := 3.4
-@export var plate_bottom_y := 0.35
-@export var squash_scale := Vector3(1.25, 0.22, 1.25)
+## La placa termina apoyada sobre el bloque final (0.9 de alto + media placa).
+@export var plate_bottom_y := 1.1
+## Escala que deja al auto (1.8 × ~1.65 × 4.4) del tamaño del bloque.
+@export var squash_scale := Vector3(0.9, 0.5, 0.55)
 
 @onready var slot_detector: Area3D = $Tolva/SlotDetector
 @onready var plate: CSGBox3D = $Placa
@@ -24,6 +30,7 @@ signal car_compacted(car: RigidBody3D)
 var _player_near := false
 var _busy := false
 var _occupant: RigidBody3D = null
+var _scrap_inside := 0
 
 
 func _ready() -> void:
@@ -44,7 +51,7 @@ func _physics_process(_delta: float) -> void:
 
 func _prompt_text() -> String:
 	if _occupant == null:
-		return "Prensa vacía"
+		return "Retirá el bloque" if _scrap_inside > 0 else "Prensa vacía"
 	if _is_well_placed(_occupant):
 		return "E: Compactar"
 	return "Acomodalo mejor"
@@ -78,27 +85,38 @@ func _try_compact() -> void:
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await down.finished
 
+	# El auto aplastado se reemplaza por un bloque rígido con forma de
+	# ladrillo, conservando posición y rumbo.
+	var block: RigidBody3D = ScrapBlockScene.instantiate()
+	add_sibling(block)
+	var fwd := -car.global_basis.z
+	block.global_transform = Transform3D(
+			Basis(Vector3.UP, atan2(-fwd.x, -fwd.z)), car.global_position)
+	if _occupant == car:
+		_occupant = null
+	car.queue_free()
+
 	var up := create_tween()
 	up.tween_property(plate, "position:y", plate_top_y, compaction_time * 0.3) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await up.finished
 
-	car.remove_from_group("auto")
-	car.add_to_group("chatarra")
-	if _occupant == car:
-		_occupant = null
-	car_compacted.emit(car)
+	car_compacted.emit(block)
 	_busy = false
 
 
 func _on_slot_body_entered(body: Node3D) -> void:
 	if body.is_in_group("auto"):
 		_occupant = body
+	elif body.is_in_group("chatarra"):
+		_scrap_inside += 1
 
 
 func _on_slot_body_exited(body: Node3D) -> void:
 	if body == _occupant:
 		_occupant = null
+	elif body.is_in_group("chatarra"):
+		_scrap_inside = maxi(_scrap_inside - 1, 0)
 
 
 func _on_console_body_entered(body: Node3D) -> void:
