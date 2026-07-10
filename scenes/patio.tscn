@@ -1,17 +1,17 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene format=3 uid="uid://cbjykd5i0kywm"]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_playr"]
 [ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="2_grua"]
-[ext_resource type="PackedScene" path="res://scenes/tractor_crane.tscn" id="3_gruam"]
+[ext_resource type="PackedScene" uid="uid://cljxmwbfpgeym" path="res://scenes/tractor_crane.tscn" id="3_gruam"]
 [ext_resource type="PackedScene" path="res://scenes/car.tscn" id="4_auto"]
 [ext_resource type="PackedScene" path="res://scenes/press.tscn" id="5_prensa"]
-[ext_resource type="PackedScene" path="res://scenes/load_zone.tscn" id="10_zona"]
-[ext_resource type="PackedScene" path="res://scenes/pit.tscn" id="11_pozo"]
-[ext_resource type="Script" path="res://scripts/money_hud.gd" id="12_mhud"]
 [ext_resource type="Material" path="res://assets/materials/greybox_grey_grid.tres" id="6_mgrey"]
 [ext_resource type="Material" path="res://assets/materials/greybox_dark_grid.tres" id="7_mdark"]
 [ext_resource type="Material" path="res://assets/materials/greybox_orange_grid.tres" id="8_morange"]
 [ext_resource type="Material" path="res://assets/materials/greybox_yellow_grid.tres" id="9_myellow"]
+[ext_resource type="PackedScene" path="res://scenes/load_zone.tscn" id="10_zona"]
+[ext_resource type="PackedScene" path="res://scenes/pit.tscn" id="11_pozo"]
+[ext_resource type="Script" uid="uid://uh2v1bbdm20q" path="res://scripts/money_hud.gd" id="12_mhud"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -28,109 +28,109 @@ sky = SubResource("sky_res")
 ambient_light_source = 3
 tonemap_mode = 2
 
-[node name="Patio" type="Node3D"]
+[node name="Patio" type="Node3D" unique_id=1962568542]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1918634033]
 environment = SubResource("env")
 
-[node name="Sol" type="DirectionalLight3D" parent="."]
+[node name="Sol" type="DirectionalLight3D" parent="." unique_id=557042624]
 transform = Transform3D(0.7071, -0.4056, 0.5793, 0, 0.8192, 0.5736, -0.7071, -0.4056, 0.5793, 0, 12, 0)
 light_color = Color(1, 0.85, 0.7, 1)
 light_energy = 1.3
 shadow_enabled = true
 
-[node name="Piso" type="CSGBox3D" parent="."]
+[node name="Piso" type="CSGBox3D" parent="." unique_id=860596569]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 use_collision = true
 size = Vector3(60, 0.5, 60)
 material = ExtResource("6_mgrey")
 
-[node name="ParedNorte" type="CSGBox3D" parent="."]
+[node name="ParedNorte" type="CSGBox3D" parent="." unique_id=402844687]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -30)
 use_collision = true
 size = Vector3(60, 3, 0.5)
 material = ExtResource("7_mdark")
 
-[node name="ParedSur" type="CSGBox3D" parent="."]
+[node name="ParedSur" type="CSGBox3D" parent="." unique_id=2115468777]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 30)
 use_collision = true
 size = Vector3(60, 3, 0.5)
 material = ExtResource("7_mdark")
 
-[node name="ParedEste" type="CSGBox3D" parent="."]
+[node name="ParedEste" type="CSGBox3D" parent="." unique_id=508172360]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 1.5, 0)
 use_collision = true
 size = Vector3(0.5, 3, 60)
 material = ExtResource("7_mdark")
 
-[node name="ParedOeste" type="CSGBox3D" parent="."]
+[node name="ParedOeste" type="CSGBox3D" parent="." unique_id=1929139907]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 1.5, 0)
 use_collision = true
 size = Vector3(0.5, 3, 60)
 material = ExtResource("7_mdark")
 
-[node name="Bloque1" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, -4)
+[node name="Bloque1" type="CSGBox3D" parent="." unique_id=1088872356]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.032506, 1, 1.8487339)
 use_collision = true
 size = Vector3(2, 2, 2)
 material = ExtResource("8_morange")
 
-[node name="Bloque2" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.75, -6.5)
+[node name="Bloque2" type="CSGBox3D" parent="." unique_id=618519260]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.210282, 0.75, -1.1609344)
 use_collision = true
 size = Vector3(2, 1.5, 2)
 material = ExtResource("8_morange")
 
-[node name="Bloque3" type="CSGBox3D" parent="."]
-transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 4, 0.5, 3)
+[node name="Bloque3" type="CSGBox3D" parent="." unique_id=609838719]
+transform = Transform3D(0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, -5.4257917, 0.5, 3)
 use_collision = true
 size = Vector3(1.2, 1, 3)
 material = ExtResource("8_morange")
 
-[node name="Plataforma" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, -11)
+[node name="Plataforma" type="CSGBox3D" parent="." unique_id=156607067]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.149403, 1, -11)
 use_collision = true
 size = Vector3(4, 2, 4)
 material = ExtResource("9_myellow")
 
-[node name="Rampa" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.9659, -0.2588, 0, 0.2588, 0.9659, 8, 0.9, -5)
+[node name="Rampa" type="CSGBox3D" parent="." unique_id=880622673]
+transform = Transform3D(1, 0, 0, 0, 0.9659, -0.2588, 0, 0.2588, 0.9659, 11.149403, 0.9, -5)
 use_collision = true
 size = Vector3(4, 0.5, 8)
 material = ExtResource("9_myellow")
 
-[node name="Player" parent="." instance=ExtResource("1_playr")]
+[node name="Player" parent="." unique_id=1980567048 instance=ExtResource("1_playr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 10)
 
-[node name="Grua" parent="." instance=ExtResource("2_grua")]
+[node name="Grua" parent="." unique_id=1373574712 instance=ExtResource("2_grua")]
 
-[node name="GruaMovil" parent="." instance=ExtResource("3_gruam")]
+[node name="GruaMovil" parent="." unique_id=1479832793 instance=ExtResource("3_gruam")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.05, 14)
 
-[node name="Auto1" parent="." instance=ExtResource("4_auto")]
+[node name="Auto1" parent="." unique_id=2058494623 instance=ExtResource("4_auto")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.4, -9)
 
-[node name="Auto2" parent="." instance=ExtResource("4_auto")]
+[node name="Auto2" parent="." unique_id=84709133 instance=ExtResource("4_auto")]
 transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, 3, 0.4, -13)
 
-[node name="Auto3" parent="." instance=ExtResource("4_auto")]
+[node name="Auto3" parent="." unique_id=1309541836 instance=ExtResource("4_auto")]
 transform = Transform3D(0.62161, 0, -0.783327, 0, 1, 0, 0.783327, 0, 0.62161, -9, 0.4, -8)
 
-[node name="Auto4" parent="." instance=ExtResource("4_auto")]
+[node name="Auto4" parent="." unique_id=2069344633 instance=ExtResource("4_auto")]
 transform = Transform3D(-0.666276, 0, 0.745705, 0, 1, 0, -0.745705, 0, -0.666276, 1, 0.4, -4)
 
-[node name="Prensa" parent="." instance=ExtResource("5_prensa")]
+[node name="Prensa" parent="." unique_id=59074613 instance=ExtResource("5_prensa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -18)
 
-[node name="ZonaCarga" parent="." instance=ExtResource("10_zona")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -18)
+[node name="ZonaCarga" parent="." unique_id=2116424423 instance=ExtResource("10_zona")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -26.311806)
 
-[node name="Pozo" parent="." instance=ExtResource("11_pozo")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -14)
+[node name="Pozo" parent="." unique_id=1095669239 instance=ExtResource("11_pozo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -26.74949)
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=716216466]
 
-[node name="Dinero" type="Label" parent="HUD"]
+[node name="Dinero" type="Label" parent="HUD" unique_id=860428564]
 offset_left = 16.0
 offset_top = 12.0
 offset_right = 240.0
