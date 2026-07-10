@@ -1,14 +1,8 @@
 [gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/hanging_magnet.gd" id="1_hmag"]
-
-[sub_resource type="StandardMaterial3D" id="mat_cable"]
-albedo_color = Color(0.2, 0.2, 0.22, 1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="mat_iman"]
-albedo_color = Color(0.55, 0.15, 0.12, 1)
-roughness = 0.5
+[ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
+[ext_resource type="Material" path="res://assets/materials/greybox_teal_solid.tres" id="3_mteal"]
 
 [sub_resource type="CylinderShape3D" id="shape_iman"]
 radius = 0.85
@@ -25,7 +19,7 @@ script = ExtResource("1_hmag")
 top_level = true
 radius = 0.05
 height = 3.0
-material = SubResource("mat_cable")
+material = ExtResource("2_mdark")
 
 [node name="MagnetBody" type="AnimatableBody3D" parent="."]
 top_level = true
@@ -38,7 +32,7 @@ shape = SubResource("shape_iman")
 [node name="ImanVisual" type="CSGCylinder3D" parent="MagnetBody"]
 radius = 0.85
 height = 0.4
-material = SubResource("mat_iman")
+material = ExtResource("3_mteal")
 
 [node name="Detector" type="Area3D" parent="MagnetBody"]
 collision_mask = 1

@@ -2,14 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/crane.gd" id="1_crane"]
 [ext_resource type="PackedScene" path="res://scenes/hanging_magnet.tscn" id="2_iman"]
-
-[sub_resource type="StandardMaterial3D" id="mat_acero"]
-albedo_color = Color(0.78, 0.62, 0.14, 1)
-roughness = 0.6
-
-[sub_resource type="StandardMaterial3D" id="mat_oscuro"]
-albedo_color = Color(0.25, 0.26, 0.3, 1)
-roughness = 0.8
+[ext_resource type="Material" path="res://assets/materials/greybox_yellow_grid.tres" id="3_myellow"]
+[ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="4_mdark"]
 
 [sub_resource type="SphereShape3D" id="shape_consola"]
 radius = 2.0
@@ -21,13 +15,13 @@ script = ExtResource("1_crane")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.2, 0)
 use_collision = true
 size = Vector3(0.6, 0.4, 52)
-material = SubResource("mat_oscuro")
+material = ExtResource("4_mdark")
 
 [node name="RielEste" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.2, 0)
 use_collision = true
 size = Vector3(0.6, 0.4, 52)
-material = SubResource("mat_oscuro")
+material = ExtResource("4_mdark")
 
 [node name="Puente" type="Node3D" parent="."]
 
@@ -35,19 +29,19 @@ material = SubResource("mat_oscuro")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 4.95, 0)
 use_collision = true
 size = Vector3(0.7, 9.1, 0.7)
-material = SubResource("mat_acero")
+material = ExtResource("3_myellow")
 
 [node name="PataEste" type="CSGBox3D" parent="Puente"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 4.95, 0)
 use_collision = true
 size = Vector3(0.7, 9.1, 0.7)
-material = SubResource("mat_acero")
+material = ExtResource("3_myellow")
 
 [node name="Viga" type="CSGBox3D" parent="Puente"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.7, 0)
 use_collision = true
 size = Vector3(29.5, 0.8, 1)
-material = SubResource("mat_acero")
+material = ExtResource("3_myellow")
 
 [node name="Carro" type="Node3D" parent="Puente"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.1, 0)
@@ -55,7 +49,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.1, 0)
 [node name="CarroVisual" type="CSGBox3D" parent="Puente/Carro"]
 use_collision = true
 size = Vector3(1.4, 0.6, 1.4)
-material = SubResource("mat_oscuro")
+material = ExtResource("4_mdark")
 
 [node name="HangingMagnet" parent="Puente/Carro" instance=ExtResource("2_iman")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.35, 0)
@@ -79,7 +73,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 20)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.575, 0)
 use_collision = true
 size = Vector3(0.7, 1.15, 0.45)
-material = SubResource("mat_oscuro")
+material = ExtResource("4_mdark")
 
 [node name="Label3D" type="Label3D" parent="Consola"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
