@@ -2,7 +2,8 @@ extends CharacterBody3D
 ## Grúa móvil tipo tractor (material handler). El jugador se sube con E.
 ## Se maneja en primera persona desde la cabina: W/S avanza/retrocede (muy
 ## lento), A/D gira el vehículo, la torreta persigue lentamente hacia donde
-## mira el operador, Q/E baja/sube el brazo, RMB precisión, Tab para bajarse.
+## mira el operador, Q/E baja/sube el brazo, Z/X rota el auto colgado,
+## RMB precisión, Tab para bajarse. Al avanzar empuja autos como un tanque.
 
 @export_group("Manejo")
 @export var drive_speed := 2.5
@@ -10,10 +11,11 @@ extends CharacterBody3D
 @export var turn_speed := 0.35
 @export var acceleration := 2.0
 @export var precision_factor := 0.4
+@export var push_accel := 14.0  # m/s² aplicados a un auto al arrollarlo
 
 @export_group("Brazo")
 @export var boom_speed := 0.5
-@export var boom_pitch_range := Vector2(0.45, 1.05)
+@export var boom_pitch_range := Vector2(0.3, 1.2)
 @export var turret_follow_speed := 0.5
 
 @export_group("Cámara")
@@ -75,6 +77,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = forward.x * _speed
 	velocity.z = forward.z * _speed
 	move_and_slide()
+	_push_cars()
 
 
 func _process_controls(delta: float) -> void:
@@ -100,6 +103,10 @@ func _process_controls(delta: float) -> void:
 			boom_pivot.rotation.x + boom_axis * boom_speed * factor * delta,
 			boom_pitch_range.x, boom_pitch_range.y)
 
+	var spin := Input.get_axis("magnet_rotate_right", "magnet_rotate_left")
+	if spin != 0.0:
+		hanging.rotate_carried(spin * factor, delta)
+
 	# La torreta persigue la mirada del operador: gira hacia donde apunta la
 	# cabeza y la cabeza compensa, así la vista queda fija mientras la torreta
 	# se acomoda debajo con su propia velocidad.
@@ -108,6 +115,25 @@ func _process_controls(delta: float) -> void:
 			-turret_follow_speed * factor * delta, turret_follow_speed * factor * delta)
 	turret.rotate_y(step)
 	cam_yaw.rotation.y -= step
+
+
+# move_and_slide no transfiere fuerza a los RigidBody: sin esto la grúa se
+# frena en seco contra un auto de frente en vez de empujarlo como un tanque.
+func _push_cars() -> void:
+	var strength := absf(_speed) / drive_speed
+	if strength < 0.05:
+		return
+	for i in get_slide_collision_count():
+		var col := get_slide_collision(i)
+		var body := col.get_collider() as RigidBody3D
+		if body == null or body.freeze:
+			continue
+		var dir := -col.get_normal()
+		dir.y = 0.0
+		if dir.length_squared() < 0.01:
+			continue
+		body.apply_force(dir.normalized() * push_accel * strength * body.mass,
+				col.get_position() - body.global_position)
 
 
 func _enter() -> void:

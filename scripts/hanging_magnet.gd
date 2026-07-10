@@ -4,6 +4,9 @@ extends Node3D
 ## cuelga debajo balanceándose según la aceleración del pivote.
 ## Energizado (LMB) atrae el auto más cercano bajo el disco y lo captura;
 ## release() lo suelta heredando la velocidad del balanceo.
+## El imán tiene rumbo (yaw) propio: sigue hacia donde apunta la grúa que lo
+## cuelga y admite rotación manual (rotate_carried); el auto capturado cuelga
+## nivelado y gira junto con ese rumbo.
 
 signal car_captured(car: RigidBody3D)
 signal car_released(car: RigidBody3D)
@@ -19,6 +22,7 @@ signal car_released(car: RigidBody3D)
 @export_group("Magnetismo")
 @export var pull_accel := 16.0
 @export var capture_distance := 0.9
+@export var rotate_speed := 1.2  # rad/s de rotación manual del auto colgado
 
 ## Del centro del imán al origen del auto colgado (techo pegado al disco).
 const CAR_HANG_OFFSET := Vector3(0, -1.85, 0)
@@ -38,7 +42,8 @@ var _pivot_vel := Vector3.ZERO
 var _prev_pivot := Vector3.ZERO
 var _prev_bob := Vector3.ZERO
 var _bob_vel := Vector3.ZERO
-var _rel_basis := Basis()
+var _yaw_manual := 0.0          # rotación manual acumulada sobre el rumbo base
+var _rel_yaw := 0.0             # yaw del auto relativo al imán al capturarlo
 var _started := false
 
 
@@ -88,15 +93,16 @@ func _physics_process(delta: float) -> void:
 	_bob_vel = (bob - _prev_bob) / delta
 	_prev_bob = bob
 
-	# El imán y el cable se inclinan siguiendo la dirección del cable.
-	var bob_basis := _basis_from_up((pivot - bob).normalized())
+	# El imán se inclina siguiendo el cable y gira con el rumbo de la grúa
+	# más la rotación manual.
+	var bob_basis := _tilted_basis((pivot - bob).normalized(), _magnet_yaw())
 	magnet_body.global_transform = Transform3D(bob_basis, bob)
 	cable.global_transform = Transform3D(bob_basis, (pivot + bob) * 0.5)
 	cable.height = pivot.distance_to(bob)
 
 	if carried:
 		carried.global_transform = Transform3D(
-				bob_basis * _rel_basis, bob + bob_basis * CAR_HANG_OFFSET)
+				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * CAR_HANG_OFFSET)
 	elif energized:
 		_attract()
 
@@ -115,7 +121,10 @@ func _attract() -> void:
 		return
 
 	best.sleeping = false
-	var hang_target: Vector3 = magnet_body.global_position + CAR_HANG_OFFSET
+	# Mismo cálculo que la posición de enganche real (rotada por la inclinación
+	# del péndulo); si no coinciden, el auto puede "aprobar" el chequeo estando
+	# lejos del punto donde en verdad va a aparecer al capturarlo.
+	var hang_target: Vector3 = magnet_body.global_position + magnet_body.global_basis * CAR_HANG_OFFSET
 	if best.global_position.distance_to(hang_target) < capture_distance:
 		_capture(best)
 	else:
@@ -129,17 +138,39 @@ func _capture(car: RigidBody3D) -> void:
 	car.freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
 	car.freeze = true
 	car.sleeping = false
-	_rel_basis = magnet_body.global_basis.inverse() * car.global_basis
+	# Solo se conserva el rumbo del auto: cuelga nivelado con el techo pegado
+	# al disco, sin heredar la inclinación con la que estaba apoyado.
+	_rel_yaw = _yaw_of(car.global_basis) - _magnet_yaw()
 	# El enganche amortigua el balanceo de golpe: masa nueva colgando.
 	_sway_vel *= 0.5
 	car_captured.emit(car)
 
 
-static func _basis_from_up(up: Vector3) -> Basis:
-	var y := up
-	var x := y.cross(Vector3.BACK)
-	if x.length_squared() < 0.0001:
-		x = Vector3.RIGHT
-	x = x.normalized()
-	var z := x.cross(y)
-	return Basis(x, y, z)
+## Gira el auto colgado alrededor del cable. axis > 0 = antihorario.
+func rotate_carried(axis: float, delta: float) -> void:
+	_yaw_manual += axis * rotate_speed * delta
+
+
+func _magnet_yaw() -> float:
+	# El eje X del pivote queda horizontal aunque el brazo tenga inclinación
+	# (la cadena torreta/brazo solo combina yaw y pitch), así que da el rumbo
+	# de la grúa sin ensuciarse con el pitch.
+	var right := global_basis.x
+	return atan2(-right.z, right.x) + _yaw_manual
+
+
+static func _yaw_of(basis: Basis) -> float:
+	var fwd := -basis.z
+	if Vector2(fwd.x, fwd.z).length_squared() < 0.001:
+		fwd = -basis.y  # auto parado de punta: el frente no define rumbo
+	return atan2(-fwd.x, -fwd.z)
+
+
+## Basis con Y alineado a `up` (inclinación mínima desde la vertical) y
+## girada `yaw` alrededor del cable.
+static func _tilted_basis(up: Vector3, yaw: float) -> Basis:
+	var spin := Basis(Vector3.UP, yaw)
+	var axis := Vector3.UP.cross(up)
+	if axis.length_squared() < 0.000001:
+		return spin
+	return Basis(axis.normalized(), Vector3.UP.angle_to(up)) * spin

@@ -1,22 +1,22 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene format=3 uid="uid://cljxmwbfpgeym"]
 
-[ext_resource type="Script" path="res://scripts/tractor_crane.gd" id="1_tcrane"]
+[ext_resource type="Script" uid="uid://bpwispe0daifs" path="res://scripts/tractor_crane.gd" id="1_tcrane"]
 [ext_resource type="PackedScene" path="res://scenes/hanging_magnet.tscn" id="2_iman"]
 
-[sub_resource type="StandardMaterial3D" id="mat_amarillo"]
-albedo_color = Color(0.78, 0.62, 0.14, 1)
-roughness = 0.6
+[sub_resource type="BoxShape3D" id="shape_chasis"]
+size = Vector3(2.6, 2.4, 4.4)
 
 [sub_resource type="StandardMaterial3D" id="mat_oscuro"]
 albedo_color = Color(0.22, 0.23, 0.26, 1)
 roughness = 0.85
 
+[sub_resource type="StandardMaterial3D" id="mat_amarillo"]
+albedo_color = Color(0.78, 0.62, 0.14, 1)
+roughness = 0.6
+
 [sub_resource type="StandardMaterial3D" id="mat_vidrio"]
 albedo_color = Color(0.3, 0.42, 0.52, 1)
 roughness = 0.3
-
-[sub_resource type="BoxShape3D" id="shape_chasis"]
-size = Vector3(2.6, 2.4, 4.4)
 
 [sub_resource type="BoxShape3D" id="shape_brazo"]
 size = Vector3(0.5, 0.6, 4.5)
@@ -27,116 +27,115 @@ size = Vector3(0.4, 0.5, 3.5)
 [sub_resource type="SphereShape3D" id="shape_acceso"]
 radius = 1.9
 
-[node name="GruaMovil" type="CharacterBody3D"]
+[node name="GruaMovil" type="CharacterBody3D" unique_id=390705877]
 script = ExtResource("1_tcrane")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=414037915]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 shape = SubResource("shape_chasis")
 
-[node name="OrugaIzq" type="CSGBox3D" parent="."]
+[node name="OrugaIzq" type="CSGBox3D" parent="." unique_id=569342005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.45, 0)
 size = Vector3(0.7, 0.9, 4.4)
 material = SubResource("mat_oscuro")
 
-[node name="OrugaDer" type="CSGBox3D" parent="."]
+[node name="OrugaDer" type="CSGBox3D" parent="." unique_id=273231097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 0.45, 0)
 size = Vector3(0.7, 0.9, 4.4)
 material = SubResource("mat_oscuro")
 
-[node name="Deck" type="CSGBox3D" parent="."]
+[node name="Deck" type="CSGBox3D" parent="." unique_id=1697441695]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 size = Vector3(2.4, 0.4, 3.8)
 material = SubResource("mat_amarillo")
 
-[node name="Torreta" type="Node3D" parent="."]
+[node name="Torreta" type="Node3D" parent="." unique_id=1417061775]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0.8)
 
-[node name="Motor" type="CSGBox3D" parent="Torreta"]
+[node name="Motor" type="CSGBox3D" parent="Torreta" unique_id=221363504]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.4)
 size = Vector3(2, 0.8, 2.4)
 material = SubResource("mat_amarillo")
 
-[node name="Contrapeso" type="CSGBox3D" parent="Torreta"]
+[node name="Contrapeso" type="CSGBox3D" parent="Torreta" unique_id=741925941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 1.7)
 size = Vector3(2.2, 1, 0.9)
 material = SubResource("mat_oscuro")
 
-[node name="Cabina" type="CSGBox3D" parent="Torreta"]
+[node name="Cabina" type="CSGBox3D" parent="Torreta" unique_id=2136563726]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1, -0.7)
 size = Vector3(0.9, 1.2, 1.3)
 material = SubResource("mat_vidrio")
 
-[node name="BoomPivot" type="Node3D" parent="Torreta"]
-transform = Transform3D(1, 0, 0, 0, 0.764842, -0.644218, 0, 0.644218, 0.764842, 0, 0.6, -1.3)
+[node name="BoomPivot" type="Node3D" parent="Torreta" unique_id=2141126645]
+transform = Transform3D(1, 0, 0, 0, 0.764842, -0.644218, 0, 0.644218, 0.764842, 0, 1.6, -1.3)
 
-[node name="Brazo" type="CSGBox3D" parent="Torreta/BoomPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.25)
-size = Vector3(0.5, 0.6, 4.5)
+[node name="Brazo" type="CSGBox3D" parent="Torreta/BoomPivot" unique_id=1067137801]
+transform = Transform3D(1, 0, 0, 0, 1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, -4.7683716e-07, -1.7563784)
+size = Vector3(0.5, 0.6, 5.4872437)
 material = SubResource("mat_amarillo")
 
-[node name="BrazoCol" type="AnimatableBody3D" parent="Torreta/BoomPivot"]
+[node name="BrazoCol" type="AnimatableBody3D" parent="Torreta/BoomPivot" unique_id=1850398212]
 collision_layer = 2
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Torreta/BoomPivot/BrazoCol"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Torreta/BoomPivot/BrazoCol" unique_id=886428271]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.25)
 shape = SubResource("shape_brazo")
 
-[node name="Codo" type="Node3D" parent="Torreta/BoomPivot"]
+[node name="Codo" type="Node3D" parent="Torreta/BoomPivot" unique_id=1172036659]
 transform = Transform3D(1, 0, 0, 0, 0.453596, 0.891207, 0, -0.891207, 0.453596, 0, 0, -4.5)
 
-[node name="Antebrazo" type="CSGBox3D" parent="Torreta/BoomPivot/Codo"]
+[node name="Antebrazo" type="CSGBox3D" parent="Torreta/BoomPivot/Codo" unique_id=1255731546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.75)
 size = Vector3(0.4, 0.5, 3.5)
 material = SubResource("mat_amarillo")
 
-[node name="AntebrazoCol" type="AnimatableBody3D" parent="Torreta/BoomPivot/Codo"]
+[node name="AntebrazoCol" type="AnimatableBody3D" parent="Torreta/BoomPivot/Codo" unique_id=1614183035]
 collision_layer = 2
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Torreta/BoomPivot/Codo/AntebrazoCol"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Torreta/BoomPivot/Codo/AntebrazoCol" unique_id=2144884590]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.75)
 shape = SubResource("shape_antebrazo")
 
-[node name="Punta" type="Marker3D" parent="Torreta/BoomPivot/Codo"]
+[node name="Punta" type="Marker3D" parent="Torreta/BoomPivot/Codo" unique_id=1652631577]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
 
-[node name="HangingMagnet" parent="Torreta/BoomPivot/Codo/Punta" instance=ExtResource("2_iman")]
+[node name="HangingMagnet" parent="Torreta/BoomPivot/Codo/Punta" unique_id=1422015455 instance=ExtResource("2_iman")]
 cable_length = 1.5
 cable_length_range = Vector2(1.5, 1.5)
 
-[node name="CamYaw" type="Node3D" parent="Torreta"]
+[node name="CamYaw" type="Node3D" parent="Torreta" unique_id=686085204]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.35, -0.75)
 
-[node name="CamPitch" type="Node3D" parent="Torreta/CamYaw"]
+[node name="CamPitch" type="Node3D" parent="Torreta/CamYaw" unique_id=2030449749]
 
-[node name="Camera3D" type="Camera3D" parent="Torreta/CamYaw/CamPitch"]
-fov = 75.0
+[node name="Camera3D" type="Camera3D" parent="Torreta/CamYaw/CamPitch" unique_id=376631970]
 
-[node name="Acceso" type="Node3D" parent="."]
+[node name="Acceso" type="Node3D" parent="." unique_id=1899281944]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 0, 0)
 
-[node name="Area3D" type="Area3D" parent="Acceso"]
+[node name="Area3D" type="Area3D" parent="Acceso" unique_id=831178116]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Acceso/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Acceso/Area3D" unique_id=513778131]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("shape_acceso")
 
-[node name="Label3D" type="Label3D" parent="Acceso"]
+[node name="Label3D" type="Label3D" parent="Acceso" unique_id=1238052935]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
 billboard = 1
 text = "Manejar grúa [E]"
 font_size = 48
 outline_size = 8
 
-[node name="PuntoBajada" type="Marker3D" parent="Acceso"]
+[node name="PuntoBajada" type="Marker3D" parent="Acceso" unique_id=1780461952]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0.05, 0)
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1907384584]
 visible = false
 
-[node name="Controles" type="Label" parent="HUD"]
+[node name="Controles" type="Label" parent="HUD" unique_id=1101765683]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -147,6 +146,6 @@ offset_bottom = -16.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 text = "W/S manejar · A/D girar · Q/E bajar/subir brazo
-Click izq. imán ON/OFF · Espacio soltar
+Click izq. imán ON/OFF · Espacio soltar · Z/X rotar auto
 La torreta sigue tu mirada · Click der. precisión
 Tab — Bajarse"

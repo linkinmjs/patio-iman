@@ -1,7 +1,8 @@
 extends Node3D
 ## Grúa pórtico del patio. Se opera desde la consola (E).
 ## En modo grúa: WASD mueve puente (W/S) y carro (A/D), Q/E baja/sube el imán,
-## RMB modo precisión, rueda del mouse zoom, Tab vuelve al modo a pie.
+## Z/X rota el auto colgado, RMB modo precisión, rueda del mouse zoom,
+## Tab vuelve al modo a pie.
 
 @export_group("Velocidades")
 @export var bridge_speed := 6.0
@@ -78,6 +79,11 @@ func _process_controls(delta: float) -> void:
 		hanging.release()
 
 	var factor := precision_factor if Input.is_action_pressed("precision") else 1.0
+
+	var spin := Input.get_axis("magnet_rotate_right", "magnet_rotate_left")
+	if spin != 0.0:
+		hanging.rotate_carried(spin * factor, delta)
+
 	var target := Vector3(
 			Input.get_axis("move_left", "move_right") * trolley_speed,
 			Input.get_axis("crane_down", "crane_up") * hoist_speed,
