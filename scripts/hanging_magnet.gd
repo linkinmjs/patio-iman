@@ -7,6 +7,9 @@ extends Node3D
 ## El imán tiene rumbo (yaw) propio: sigue hacia donde apunta la grúa que lo
 ## cuelga y admite rotación manual (rotate_carried); el auto capturado cuelga
 ## nivelado y gira junto con ese rumbo.
+## Feedback de energía: con el imán prendido (o con carga) el disco se pone
+## naranja emisivo y proyecta luz hacia abajo; el estado persiste aunque el
+## operador se baje de la grúa.
 
 signal car_captured(car: RigidBody3D)
 signal car_released(car: RigidBody3D)
@@ -34,6 +37,11 @@ var carried: RigidBody3D = null
 @onready var cable: CSGCylinder3D = $Cable
 @onready var magnet_body: AnimatableBody3D = $MagnetBody
 @onready var detector: Area3D = $MagnetBody/Detector
+@onready var magnet_visual: CSGCylinder3D = $MagnetBody/ImanVisual
+@onready var status_light: OmniLight3D = $MagnetBody/StatusLight
+
+var _mat_off: Material
+var _mat_on: StandardMaterial3D
 
 var _sway := Vector2.ZERO       # desplazamiento angular (rad) en ejes X/Z
 var _sway_vel := Vector2.ZERO
@@ -46,15 +54,26 @@ var _rel_yaw := 0.0             # yaw del auto relativo al imán al capturarlo
 var _started := false
 
 
+func _ready() -> void:
+	_mat_off = magnet_visual.material
+	_mat_on = StandardMaterial3D.new()
+	_mat_on.albedo_color = Color(1.0, 0.45, 0.15)
+	_mat_on.emission_enabled = true
+	_mat_on.emission = Color(1.0, 0.4, 0.1)
+	_mat_on.emission_energy_multiplier = 1.4
+
+
 func toggle_magnet() -> void:
 	if energized or carried:
 		release()
 	else:
 		energized = true
+		_update_power_visuals()
 
 
 func release() -> void:
 	energized = false
+	_update_power_visuals()
 	if carried == null:
 		return
 	var car := carried
@@ -151,6 +170,12 @@ func _capture(car: RigidBody3D) -> void:
 ## Gira el auto colgado alrededor del cable. axis > 0 = antihorario.
 func rotate_carried(axis: float, delta: float) -> void:
 	_yaw_manual += axis * rotate_speed * delta
+
+
+func _update_power_visuals() -> void:
+	var on := energized or carried != null
+	magnet_visual.material = _mat_on if on else _mat_off
+	status_light.visible = on
 
 
 ## Altura de la cara de agarre sobre el origen del cuerpo. Cada escena
