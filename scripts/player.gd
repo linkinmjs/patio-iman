@@ -2,7 +2,8 @@ extends CharacterBody3D
 ## Controlador del jugador a pie: WASD, mouse para cámara, Shift trote, C agacharse.
 ## Esc libera el mouse; click dentro de la ventana lo vuelve a capturar.
 ## Mirando de cerca: E mantenido lootea un auto; E agarra/suelta una parte
-## desprendida (se lleva a mano, click izq. la lanza).
+## desprendida (se lleva a mano, click izq. la lanza); E lee un cartel
+## (el control se congela mientras dura el diálogo).
 
 @export_group("Movimiento")
 @export var walk_speed := 4.0
@@ -118,10 +119,30 @@ func _update_interaction(delta: float) -> void:
 				_loot_progress = 0.0
 		else:
 			prompt.text = "Lootear — mantener [E]"
+	elif target is StaticBody3D and target.is_in_group("cartel"):
+		_loot_target = null
+		_loot_progress = 0.0
+		prompt.text = "Leer [E]"
+		if Input.is_action_just_pressed("interact"):
+			_start_dialogue(target)
 	else:
 		_loot_target = null
 		_loot_progress = 0.0
 		prompt.text = ""
+
+
+## Congela el control, libera el mouse y arranca el diálogo del cartel;
+## el control vuelve solo cuando el diálogo termina.
+func _start_dialogue(sign_body) -> void:
+	set_control_enabled(false)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	DialogueManager.dialogue_ended.connect(_on_dialogue_ended, CONNECT_ONE_SHOT)
+	sign_body.start_dialogue()
+
+
+func _on_dialogue_ended(_resource: DialogueResource) -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	set_control_enabled(true)
 
 
 func _aim_target():  # Object o null; sin tipo para acceder a props de scripts

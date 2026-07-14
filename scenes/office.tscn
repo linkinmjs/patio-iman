@@ -1,0 +1,56 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/office.gd" id="1_ofi"]
+[ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
+
+[sub_resource type="SphereShape3D" id="shape_oficina"]
+radius = 2.0
+
+[node name="Oficina" type="Node3D"]
+script = ExtResource("1_ofi")
+
+[node name="Gabinete" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.575, 0)
+use_collision = true
+size = Vector3(0.7, 1.15, 0.45)
+material = ExtResource("2_mdark")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+billboard = 1
+text = "Terminar jornada [E]"
+font_size = 48
+outline_size = 8
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_oficina")
+
+[node name="Resumen" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Fondo" type="ColorRect" parent="Resumen"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -190.0
+offset_right = 280.0
+offset_bottom = 190.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Texto" type="Label" parent="Resumen/Fondo"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1

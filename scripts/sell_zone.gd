@@ -4,6 +4,7 @@ extends Node3D
 ## adentro, paga su meta "scrap_value", muestra el monto y lo absorbe.
 
 @export var accepted_group := "chatarra"
+@export var income_category := "chatarra"  ## rubro del resumen de jornada
 @export var settle_speed := 0.5  ## m/s máx. para considerarlo depositado
 
 @onready var area: Area3D = $Area3D
@@ -28,7 +29,7 @@ func _physics_process(_delta: float) -> void:
 func _sell(body: RigidBody3D) -> void:
 	_selling[body] = true
 	var value := int(body.get_meta("scrap_value", 0))
-	GameState.add_money(value)
+	GameState.register_income(income_category, value)
 	label.text = "+$%d" % value
 	get_tree().create_timer(1.5).timeout.connect(func() -> void:
 		label.text = _base_text)

@@ -1,4 +1,6 @@
 - Dar un poco de feel de "tanque de guerra" al manejar la grúa. **Parcial**: la grúa ahora empuja autos con fuerza al avanzar (tracción). Falta: poder pasar por encima de determinados obstáculos.
 - El "pozo de piezas" es un placeholder estilo *berry bury berry*: eventualmente será "algo" más relevante y con más sentido (¿mesa de despiece, comprador, depósito?).
+- La recepción de autos es un pad donde aparecen: eventualmente debería ser un camión que entra al patio y los descarga.
 - Progresión de looteo (talentos o herramientas) para mejorar eficacia y velocidad de extracción de partes: cantidad de partes, chance de catalizador, tiempo de looteo.
 - Los autos ya looteados no cambian visualmente; estaría bueno un feedback (capó abierto, color más apagado).
+- Me gustaría que añadamos algún sistema de "trofeos" o algo similar donde podamos encontrar una serie de "objetos" con cierto lore, como por ejemplo, un pinito para colgar en el auto (aromitazante), pero como si alguien le hubiera dado un mordisco

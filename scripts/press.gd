@@ -14,6 +14,12 @@ const ScrapBlockScene := preload("res://scenes/scrap_block.tscn")
 @export var max_tilt_deg := 12.0
 @export var max_speed := 0.35
 
+@export_group("Bono de maniobra")
+## Ventana de "drop perfecto" del documento: centro < 0.6 m, ángulo < 7°.
+@export var perfect_offset := 0.6
+@export var perfect_tilt_deg := 7.0
+@export var perfect_bonus := 40
+
 @export_group("Compactación")
 @export var compaction_time := 15.0
 @export var plate_top_y := 3.4
@@ -73,6 +79,12 @@ func _try_compact() -> void:
 		return
 	_busy = true
 	var car := _occupant
+	# El acomodo se mide antes de congelar: mejor que la tolerancia mínima
+	# (ventana de drop perfecto) paga bono de maniobra.
+	var offset: Vector3 = car.global_position - slot_detector.global_position
+	var tilt := rad_to_deg(car.global_basis.y.angle_to(Vector3.UP))
+	var bonus := perfect_bonus if Vector2(offset.x, offset.z).length() < perfect_offset \
+			and tilt < perfect_tilt_deg else 0
 	console_label.text = "Compactando..."
 	car.freeze = true
 	car.sleeping = true
@@ -102,6 +114,10 @@ func _try_compact() -> void:
 	await up.finished
 
 	car_compacted.emit(block)
+	if bonus > 0:
+		GameState.register_income("bonos", bonus)
+		console_label.text = "¡Maniobra perfecta! +$%d" % bonus
+		await get_tree().create_timer(1.5).timeout
 	_busy = false
 
 

@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/car_spawner.gd" id="1_recep"]
+[ext_resource type="Material" path="res://assets/materials/greybox_light_grid.tres" id="2_mlight"]
+
+[sub_resource type="BoxShape3D" id="shape_libre"]
+size = Vector3(5, 2, 3.5)
+
+[node name="Recepcion" type="Node3D"]
+script = ExtResource("1_recep")
+
+[node name="Pad" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+size = Vector3(5, 0.08, 3.5)
+material = ExtResource("2_mlight")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+shape = SubResource("shape_libre")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+billboard = 1
+text = "Recepción"
+font_size = 48
+outline_size = 8

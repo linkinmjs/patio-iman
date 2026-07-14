@@ -13,6 +13,7 @@ size = Vector3(2, 1.6, 2)
 [node name="Pozo" type="Node3D"]
 script = ExtResource("1_zona")
 accepted_group = "parte"
+income_category = "piezas"
 
 [node name="Fondo" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.011, 0)
