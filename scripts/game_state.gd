@@ -67,6 +67,12 @@ const UPGRADE_CATALOG := {
 			{"price": 3500, "desc": "7 autos más por día: jornada a patio lleno.",
 				"effects": {"extra_cars_per_day": 7}},
 		]},
+	"linterna": {
+		"name": "Linterna de mano",
+		"levels": [
+			{"price": 300, "desc": "Luz portátil para la noche (tecla T).",
+				"effects": {"has_flashlight": 1}},
+		]},
 }
 
 var money := 0
@@ -74,6 +80,16 @@ var day := 1
 var day_active := true
 var day_income := {"chatarra": 0, "piezas": 0, "bonos": 0}
 var upgrades := {}  # id del catálogo -> nivel comprado (1-based)
+
+## Hora del mundo (0-24). La jornada arranca a las 06:00 y el reloj solo
+## corre con la jornada activa; un día completo dura seconds_per_game_day.
+var hour := 6.0
+var seconds_per_game_day := 1200.0
+
+
+func _process(delta: float) -> void:
+	if day_active:
+		hour = wrapf(hour + delta * 24.0 / seconds_per_game_day, 0.0, 24.0)
 
 
 func add_money(amount: int) -> void:
@@ -101,7 +117,16 @@ func start_next_day() -> void:
 	for category in day_income:
 		day_income[category] = 0
 	day_active = true
+	hour = 6.0
 	day_started.emit(day)
+
+
+func is_night() -> bool:
+	return hour < 6.0 or hour > 18.5
+
+
+func clock_text() -> String:
+	return "%02d:%02d" % [int(hour), int(fmod(hour, 1.0) * 60.0)]
 
 
 func upgrade_level(id: String) -> int:

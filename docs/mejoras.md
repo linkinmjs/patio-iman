@@ -75,6 +75,11 @@ Guía de precios: la primera compra debe caer al final de la jornada 1-2
 - El límite de 6 autos *simultáneos* no cambia (presupuesto de performance);
   cambia el ritmo de reposición.
 
+### 7. Linterna de mano (1 nivel) — $300
+- **Dolor:** con el ciclo día/noche, el patio de noche queda a oscuras.
+- Tecla T. Primera compra del sistema de luces; después pueden apilarse
+  baterías (consumible) y upgrades de alcance/intensidad.
+
 ---
 
 ## Tanda 2 — diseñadas, para próximos hitos

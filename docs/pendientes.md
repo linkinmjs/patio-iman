@@ -2,12 +2,16 @@
 - El "pozo de piezas" es un placeholder estilo *berry bury berry*: eventualmente será "algo" más relevante y con más sentido (¿mesa de despiece, comprador, depósito?).
 - La recepción de autos es un pad donde aparecen: eventualmente debería ser un camión que entra al patio y los descarga.
 - Progresión de looteo: **cubierta en parte** por el Kit de despiece de la tienda (tiempo y +1 parte); falta chance de catalizador (talentos).
-- Tienda del patio: implementada la tanda 1 (6 mejoras). La tanda 2 (MagVac, escáner VIN, guía láser, remolque, yardbot, tolva, rieles) está diseñada en `docs/mejoras.md`.
-- Los autos ya looteados no cambian visualmente; estaría bueno un feedback (capó abierto, color más apagado).
+- Tienda del patio: implementada la tanda 1 (7 mejoras, linterna incluida). La tanda 2 (MagVac, escáner VIN, guía láser, remolque, yardbot, tolva, rieles) está diseñada en `docs/mejoras.md`.
+- Feedback de auto looteado: **hecho** — la pintura y los vidrios quedan apagados al lootear. Puede sumarse el capó abierto más adelante.
 - Me gustaría que añadamos algún sistema de "trofeos" o algo similar donde podamos encontrar una serie de "objetos" con cierto lore, como por ejemplo, un pinito para colgar en el auto (aromitazante), pero como si alguien le hubiera dado un mordisco.
-- Corregir: si el player intenta empujar un auto este no se mueve, pero si pasa cerca de las esquinas es como si lo "enganchara" y lo mueve con facilidad.
-- Hay que implementar un sistema de Luces. Algunas mejoras pueden ser: Una Linterna, baterías. Faroles o postes de Luz. Luces para la grúa.
+- Corregir: si el player intenta empujar un auto este no se mueve, pero si pasa cerca de las esquinas es como si lo "enganchara" y lo mueve con facilidad. *(Pendiente: requiere investigar la despenetración del CharacterBody contra RigidBody en Jolt; no tiene fix trivial.)*
+- Sistema de luces: **v1 hecha** — linterna comprable en la tienda (tecla T), faroles que se prenden solos de noche y luz de trabajo nocturna en el imán de ambas grúas. Falta: baterías como consumible, upgrades de alcance, ¿luz frontal del tractor?
 - La grúa Fija es muy cómoda. Esta puede ser una mejora para late game tal vez.
-- Corregir: Las luces que indican que el imán está encendido, en ocasiones se queda "prendido" aún estando desactivado.
-- Implementar día y noche. El día debería comenzar a las am
-- Me gustaría que añadamos algún menú de opciones para debug. Por ejemplo: habilitar modo fantasma para moverme. Conseguir plata para probar mejoras, modificar la hora del día. etc...
+- Luz del imán "pegada": **corregido** — el feedback de energía se resincroniza cada frame y tolera que el cuerpo colgado desaparezca.
+- Día y noche: **hecho** — la jornada arranca a las 06:00; un día completo dura 20 min reales (`seconds_per_game_day` en GameState); sol, cielo y ambiente acompañan la hora, y el HUD muestra el reloj.
+- Menú de debug: **hecho** — F1 abre el panel: +$5.000, modo fantasma (vuelo libre sin colisiones, Space/C sube/baja), +2 horas.
+- Un arma. Me gustaría incorporar como parte del juego un arma. En algún momento debería poder acceder a comprar una (una bersa o un revolver). Esta arma no tendría realmente un uso regular como en un juego de FPS, el player debería comprar balas (una caja) y estas serían levemente escasas. pero si deberían permitirle al player utilizarla y gastar algunas balas como si fuera un tiro al blanco. El player debería poder pensar que con esa arma puede combatir los "misterios" o enemigos con los que de pronto se sienta perseguido. Me gustaría añadirle recoil y alguna dificultad para usarse. El player no tiene entrenamiento militar o policial por lo que no sabe utilizar el arma y esta no debería ser fácil de manipular. Luego iremos desarrollando el lore. Nunca la usaría (o la usaría pero no serviría) contra las deidades que aparezcan, pero si le permitirían al player acceder a conseguir algúnos trofeos o simplemente gozar de disparar algunas balas contra algunos blancos.
+- Agregar un menu.
+- Cuando el juego esté un poco más avanzado, armaremos el GDD del juego y podríamos armar las especificaciones.
+- Colisiones del auto imantado: **corregido** — el cuerpo colgado ya no atraviesa piso, prensa ni paredes (se testea el movimiento contra el mundo estático antes de moverlo; si choca, queda apoyado como si el cable se aflojara). Sigue empujando autos y partes como antes.

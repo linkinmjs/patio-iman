@@ -16,6 +16,10 @@
 [ext_resource type="PackedScene" path="res://scenes/office.tscn" id="14_ofi"]
 [ext_resource type="PackedScene" path="res://scenes/sign.tscn" id="15_cartel"]
 [ext_resource type="PackedScene" path="res://scenes/shop_terminal.tscn" id="16_tienda"]
+[ext_resource type="PackedScene" path="res://scenes/stranger.tscn" id="17_desc"]
+[ext_resource type="PackedScene" path="res://scenes/lamp_post.tscn" id="18_farol"]
+[ext_resource type="PackedScene" path="res://scenes/debug_menu.tscn" id="19_debug"]
+[ext_resource type="Script" path="res://scripts/day_night.gd" id="20_ciclo"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -149,6 +153,26 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 29.040573, 0, 15)
 
 [node name="Tienda" parent="." instance=ExtResource("16_tienda")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 10)
+
+[node name="Desconocido" parent="." instance=ExtResource("17_desc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -30.9)
+
+[node name="CicloDia" type="Node" parent="."]
+script = ExtResource("20_ciclo")
+
+[node name="Farol1" parent="." instance=ExtResource("18_farol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 17)
+
+[node name="Farol2" parent="." instance=ExtResource("18_farol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 8)
+
+[node name="Farol3" parent="." instance=ExtResource("18_farol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, -14.5)
+
+[node name="Farol4" parent="." instance=ExtResource("18_farol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -28.5)
+
+[node name="Debug" parent="." instance=ExtResource("19_debug")]
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=716216466]
 

@@ -41,6 +41,14 @@ light_color = Color(1, 0.5, 0.2, 1)
 light_energy = 2.0
 omni_range = 5.0
 
+[node name="WorkLight" type="SpotLight3D" parent="MagnetBody"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, -0.15, 0)
+visible = false
+light_color = Color(1, 0.95, 0.85, 1)
+light_energy = 3.0
+spot_range = 16.0
+spot_angle = 40.0
+
 [node name="Detector" type="Area3D" parent="MagnetBody"]
 collision_mask = 1
 

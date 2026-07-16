@@ -39,6 +39,7 @@ var carried: RigidBody3D = null
 @onready var detector: Area3D = $MagnetBody/Detector
 @onready var magnet_visual: CSGCylinder3D = $MagnetBody/ImanVisual
 @onready var status_light: OmniLight3D = $MagnetBody/StatusLight
+@onready var work_light: SpotLight3D = $MagnetBody/WorkLight
 
 var _mat_off: Material
 var _mat_on: StandardMaterial3D
@@ -86,6 +87,11 @@ func release() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if carried != null and not is_instance_valid(carried):
+		carried = null  # el cuerpo colgado fue liberado por otro sistema
+	_update_power_visuals()  # defensivo: el feedback nunca queda "pegado"
+	work_light.visible = GameState.is_night()
+
 	var pivot := global_position
 	if not _started:
 		_started = true
@@ -122,10 +128,33 @@ func _physics_process(delta: float) -> void:
 
 	if carried:
 		var hang := Vector3(0, -(HANG_CLEARANCE + _grab_top(carried)), 0)
-		carried.global_transform = Transform3D(
-				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * hang)
+		carried.global_transform = _blocked_motion(carried, Transform3D(
+				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * hang))
 	elif energized:
 		_attract()
+
+
+## El colgado es kinematic: teletransportado a su posición nueva atraviesa
+## los cuerpos estáticos (piso, prensa, paredes). Antes de moverlo se testea
+## el trayecto y, si choca, queda en el punto de contacto — como si el cable
+## se aflojara. Los cuerpos dinámicos (autos, bloques, partes) se excluyen
+## del test para que el colgado pueda seguir empujándolos como hasta ahora.
+func _blocked_motion(body: RigidBody3D, target: Transform3D) -> Transform3D:
+	var params := PhysicsTestMotionParameters3D.new()
+	params.from = body.global_transform
+	params.motion = target.origin - body.global_position
+	params.margin = 0.01
+	var excluded: Array[RID] = [magnet_body.get_rid()]
+	for group in ["auto", "chatarra", "parte"]:
+		for node in get_tree().get_nodes_in_group(group):
+			if node is RigidBody3D and node != body:
+				excluded.append(node.get_rid())
+	params.exclude_bodies = excluded
+	var result := PhysicsTestMotionResult3D.new()
+	if PhysicsServer3D.body_test_motion(body.get_rid(), params, result):
+		return Transform3D(target.basis,
+				body.global_position + params.motion * result.get_collision_safe_fraction())
+	return target
 
 
 func _attract() -> void:

@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://cu4kqncjvjh6t"
+path="res://.godot/imported/desconocido.dialogue-b695e4b33209a2e2db9fac5d5f203acf.tres"
+
+[deps]
+
+source_file="res://dialogues/desconocido.dialogue"
+dest_files=["res://.godot/imported/desconocido.dialogue-b695e4b33209a2e2db9fac5d5f203acf.tres"]
+
+[params]
+
+defaults=true

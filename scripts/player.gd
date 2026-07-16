@@ -21,6 +21,12 @@ extends CharacterBody3D
 @export var carry_offset := Vector3(0, -0.25, -0.85)
 @export var throw_speed := 4.5
 
+@export_group("Zoom dramático")
+@export var focus_fov := 30.0
+@export var focus_in_time := 0.35
+@export var focus_out_time := 0.5
+@export var focus_time_scale := 0.45  ## cámara lenta durante el zoom
+
 const STAND_HEIGHT := 1.8
 const CROUCH_HEIGHT := 1.2
 const STAND_EYE := 1.65
@@ -31,12 +37,16 @@ const MAX_PITCH := 1.5  # ~86°, evita gimbal en el cenit
 @onready var head: Node3D = $Head
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var camera: Camera3D = $Head/Camera3D
+@onready var flashlight: SpotLight3D = $Head/Linterna
 @onready var prompt: Label = $HUD/Prompt
 
 var _pitch := 0.0
 var _carried: RigidBody3D = null
 var _loot_target: RigidBody3D = null
 var _loot_progress := 0.0
+var _focusing := false
+var _ghost := false
+var _normal_mask := 0
 
 
 func _ready() -> void:
@@ -69,6 +79,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _ghost:
+		_ghost_move()
+		return
+	if Input.is_action_just_pressed("flashlight") \
+			and GameState.effect("has_flashlight", 0.0) > 0.0:
+		flashlight.visible = not flashlight.visible
+
 	var crouching := Input.is_action_pressed("crouch")
 	_update_height(crouching, delta)
 
@@ -132,17 +149,62 @@ func _update_interaction(delta: float) -> void:
 		prompt.text = ""
 
 
-## Congela el control, libera el mouse y arranca el diálogo del cartel;
-## el control vuelve solo cuando el diálogo termina.
-func _start_dialogue(sign_body) -> void:
+## Muestra un diálogo congelando el control y liberando el mouse; el control
+## vuelve solo cuando el diálogo termina.
+func play_dialogue(resource: DialogueResource, title := "start") -> void:
 	set_control_enabled(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	DialogueManager.dialogue_ended.connect(_on_dialogue_ended, CONNECT_ONE_SHOT)
-	sign_body.start_dialogue()
+	DialogueManager.show_dialogue_balloon(resource, title)
+
+
+func _start_dialogue(sign_body) -> void:
+	play_dialogue(sign_body.dialogue, sign_body.dialogue_title)
 
 
 func _on_dialogue_ended(_resource: DialogueResource) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	set_control_enabled(true)
+
+
+## Zoom dramático (estilo Grunn) hacia un punto de interés: congela el
+## control, gira la vista hacia el punto, cierra el FOV y ralentiza el
+## tiempo; al terminar devuelve el control con la mirada sobre el evento.
+## Cualquier sistema puede dispararlo sobre el nodo del grupo "player".
+func focus_on(point: Vector3, hold := 1.4) -> void:
+	if _focusing:
+		return
+	_focusing = true
+	set_control_enabled(false)
+	Engine.time_scale = focus_time_scale
+	var base_fov := camera.fov
+	var to_point := point - head.global_position
+	var start_yaw := rotation.y
+	var start_pitch := head.rotation.x
+	var target_yaw := atan2(-to_point.x, -to_point.z)
+	var target_pitch := clampf(
+			atan2(to_point.y, Vector2(to_point.x, to_point.z).length()),
+			-MAX_PITCH, MAX_PITCH)
+
+	var look := func(t: float) -> void:
+		rotation.y = lerp_angle(start_yaw, target_yaw, t)
+		head.rotation.x = lerp_angle(start_pitch, target_pitch, t)
+	var tw := create_tween().set_parallel(true)
+	tw.set_speed_scale(1.0 / focus_time_scale)  # el zoom no se ralentiza a sí mismo
+	tw.tween_method(look, 0.0, 1.0, focus_in_time) \
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(camera, "fov", focus_fov, focus_in_time) \
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await tw.finished
+	await get_tree().create_timer(hold, true, false, true).timeout
+
+	Engine.time_scale = 1.0
+	var back := create_tween()
+	back.tween_property(camera, "fov", base_fov, focus_out_time) \
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	await back.finished
+	_pitch = head.rotation.x
+	_focusing = false
 	set_control_enabled(true)
 
 
@@ -179,6 +241,26 @@ func _drop(speed: float) -> void:
 	part.sleeping = false
 	part.linear_velocity = velocity - head.global_basis.z * speed
 	part.angular_velocity = Vector3.ZERO
+
+
+## Modo fantasma del menú de debug: vuelo libre sin colisiones.
+func set_ghost_mode(on: bool) -> void:
+	_ghost = on
+	if on and _normal_mask == 0:
+		_normal_mask = collision_mask
+	collision_mask = 0 if on else _normal_mask
+	velocity = Vector3.ZERO
+	prompt.text = ""
+
+
+## WASD en la dirección de la mirada, Space sube, C baja, Shift acelera.
+func _ghost_move() -> void:
+	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var dir: Vector3 = head.global_basis * Vector3(input_dir.x, 0.0, input_dir.y)
+	dir.y += Input.get_axis("crouch", "jump")
+	var speed := sprint_speed * (3.0 if Input.is_action_pressed("sprint") else 1.5)
+	velocity = dir.limit_length(1.0) * speed
+	move_and_slide()
 
 
 func _update_height(crouching: bool, delta: float) -> void:
