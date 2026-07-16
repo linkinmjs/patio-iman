@@ -112,9 +112,10 @@ func _update_interaction(delta: float) -> void:
 			_loot_target = target
 			_loot_progress = 0.0
 		if Input.is_action_pressed("interact"):
+			var effective_loot_time: float = GameState.effect("loot_time", loot_time)
 			_loot_progress += delta
-			prompt.text = "Looteando… %d%%" % int(_loot_progress / loot_time * 100.0)
-			if _loot_progress >= loot_time:
+			prompt.text = "Looteando… %d%%" % int(_loot_progress / effective_loot_time * 100.0)
+			if _loot_progress >= effective_loot_time:
 				target.loot()
 				_loot_progress = 0.0
 		else:

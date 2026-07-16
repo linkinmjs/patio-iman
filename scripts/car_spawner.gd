@@ -27,8 +27,9 @@ func _physics_process(delta: float) -> void:
 	if not GameState.day_active:
 		label.text = "Recepción — cerrada"
 		return
-	label.text = "Recepción — %d/%d hoy" % [_delivered_today, cars_per_day]
-	if _delivered_today >= cars_per_day or _cooldown > 0.0:
+	var quota := cars_per_day + int(GameState.effect("extra_cars_per_day", 0))
+	label.text = "Recepción — %d/%d hoy" % [_delivered_today, quota]
+	if _delivered_today >= quota or _cooldown > 0.0:
 		return
 	if get_tree().get_nodes_in_group("auto").size() >= max_alive_cars:
 		return

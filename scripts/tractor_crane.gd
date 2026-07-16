@@ -94,7 +94,8 @@ func _process_controls(delta: float) -> void:
 
 	var throttle := Input.get_axis("move_back", "move_forward")
 	var steer := Input.get_axis("move_left", "move_right")
-	var max_speed := drive_speed if throttle >= 0.0 else reverse_speed
+	var max_speed := (drive_speed if throttle >= 0.0 else reverse_speed) \
+			* GameState.effect("tractor_speed_mult", 1.0)
 	_speed = lerpf(_speed, throttle * max_speed * factor, acceleration * delta)
 	rotate_y(-steer * turn_speed * factor * delta)
 

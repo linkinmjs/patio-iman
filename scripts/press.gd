@@ -89,11 +89,13 @@ func _try_compact() -> void:
 	car.freeze = true
 	car.sleeping = true
 
+	# Los pistones de alto tonelaje (tienda) acortan el ciclo.
+	var cycle := compaction_time * GameState.effect("press_cycle_mult", 1.0)
 	var down := create_tween()
 	down.set_parallel(true)
-	down.tween_property(plate, "position:y", plate_bottom_y, compaction_time * 0.7) \
+	down.tween_property(plate, "position:y", plate_bottom_y, cycle * 0.7) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	down.tween_property(car, "scale", squash_scale, compaction_time * 0.7) \
+	down.tween_property(car, "scale", squash_scale, cycle * 0.7) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await down.finished
 
@@ -104,12 +106,14 @@ func _try_compact() -> void:
 	var fwd := -car.global_basis.z
 	block.global_transform = Transform3D(
 			Basis(Vector3.UP, atan2(-fwd.x, -fwd.z)), car.global_position)
+	block.set_meta("scrap_value", roundi(float(block.get_meta("scrap_value", 120))
+			* GameState.effect("press_value_mult", 1.0)))
 	if _occupant == car:
 		_occupant = null
 	car.queue_free()
 
 	var up := create_tween()
-	up.tween_property(plate, "position:y", plate_top_y, compaction_time * 0.3) \
+	up.tween_property(plate, "position:y", plate_top_y, cycle * 0.3) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await up.finished
 

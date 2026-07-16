@@ -1,6 +1,13 @@
 - Dar un poco de feel de "tanque de guerra" al manejar la grúa. **Parcial**: la grúa ahora empuja autos con fuerza al avanzar (tracción). Falta: poder pasar por encima de determinados obstáculos.
 - El "pozo de piezas" es un placeholder estilo *berry bury berry*: eventualmente será "algo" más relevante y con más sentido (¿mesa de despiece, comprador, depósito?).
 - La recepción de autos es un pad donde aparecen: eventualmente debería ser un camión que entra al patio y los descarga.
-- Progresión de looteo (talentos o herramientas) para mejorar eficacia y velocidad de extracción de partes: cantidad de partes, chance de catalizador, tiempo de looteo.
+- Progresión de looteo: **cubierta en parte** por el Kit de despiece de la tienda (tiempo y +1 parte); falta chance de catalizador (talentos).
+- Tienda del patio: implementada la tanda 1 (6 mejoras). La tanda 2 (MagVac, escáner VIN, guía láser, remolque, yardbot, tolva, rieles) está diseñada en `docs/mejoras.md`.
 - Los autos ya looteados no cambian visualmente; estaría bueno un feedback (capó abierto, color más apagado).
-- Me gustaría que añadamos algún sistema de "trofeos" o algo similar donde podamos encontrar una serie de "objetos" con cierto lore, como por ejemplo, un pinito para colgar en el auto (aromitazante), pero como si alguien le hubiera dado un mordisco
+- Me gustaría que añadamos algún sistema de "trofeos" o algo similar donde podamos encontrar una serie de "objetos" con cierto lore, como por ejemplo, un pinito para colgar en el auto (aromitazante), pero como si alguien le hubiera dado un mordisco.
+- Corregir: si el player intenta empujar un auto este no se mueve, pero si pasa cerca de las esquinas es como si lo "enganchara" y lo mueve con facilidad.
+- Hay que implementar un sistema de Luces. Algunas mejoras pueden ser: Una Linterna, baterías. Faroles o postes de Luz. Luces para la grúa.
+- La grúa Fija es muy cómoda. Esta puede ser una mejora para late game tal vez.
+- Corregir: Las luces que indican que el imán está encendido, en ocasiones se queda "prendido" aún estando desactivado.
+- Implementar día y noche. El día debería comenzar a las am
+- Me gustaría que añadamos algún menú de opciones para debug. Por ejemplo: habilitar modo fantasma para moverme. Conseguir plata para probar mejoras, modificar la hora del día. etc...

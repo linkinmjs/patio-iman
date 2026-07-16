@@ -98,10 +98,12 @@ func _physics_process(delta: float) -> void:
 	_prev_pivot = pivot
 
 	# Péndulo de ángulos chicos excitado por la aceleración del pivote.
+	# El estabilizador giroscópico (tienda) multiplica la amortiguación.
 	var cl := maxf(cable_length, 0.3)
+	var damping := sway_damping * GameState.effect("sway_damping_mult", 1.0)
 	var sway_accel := Vector2(
-			-(sway_gravity / cl) * _sway.x - pivot_accel.x / cl - sway_damping * _sway_vel.x,
-			-(sway_gravity / cl) * _sway.y - pivot_accel.z / cl - sway_damping * _sway_vel.y)
+			-(sway_gravity / cl) * _sway.x - pivot_accel.x / cl - damping * _sway_vel.x,
+			-(sway_gravity / cl) * _sway.y - pivot_accel.z / cl - damping * _sway_vel.y)
 	_sway_vel += sway_accel * delta
 	_sway = (_sway + _sway_vel * delta).limit_length(max_sway)
 
@@ -146,12 +148,14 @@ func _attract() -> void:
 	# lejos del punto donde en verdad va a aparecer al capturarlo.
 	var hang_target: Vector3 = magnet_body.global_position \
 			+ magnet_body.global_basis * Vector3(0, -(HANG_CLEARANCE + _grab_top(best)), 0)
-	if best.global_position.distance_to(hang_target) < capture_distance:
+	if best.global_position.distance_to(hang_target) \
+			< GameState.effect("capture_distance", capture_distance):
 		_capture(best)
 	else:
 		var top: Vector3 = best.global_position + best.global_basis * Vector3(0, _grab_top(best), 0)
 		var dir: Vector3 = (bottom - top).normalized()
-		best.apply_central_force(dir * pull_accel * best.mass)
+		best.apply_central_force(
+				dir * pull_accel * GameState.effect("pull_accel_mult", 1.0) * best.mass)
 
 
 func _capture(car: RigidBody3D) -> void:

@@ -12,7 +12,7 @@ func loot() -> void:
 	if looted:
 		return
 	looted = true
-	for i in randi_range(2, 3):
+	for i in randi_range(2, 3) + int(GameState.effect("loot_extra_parts", 0)):
 		var part := CarPartScene.instantiate()
 		part.type = part.random_type()
 		get_parent().add_child(part)
