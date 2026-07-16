@@ -73,6 +73,19 @@ const UPGRADE_CATALOG := {
 			{"price": 300, "desc": "Luz portátil para la noche (tecla T).",
 				"effects": {"has_flashlight": 1}},
 		]},
+	"revolver": {
+		"name": "Revólver .38 gastado",
+		"levels": [
+			{"price": 1200, "desc": "G lo saca: click dispara, click der. apunta, R recarga bala a bala.",
+				"effects": {"has_gun": 1}},
+		]},
+	"balas": {
+		"name": "Caja de balas .38",
+		"requires": "revolver",
+		"repeatable": true,
+		"price": 150,
+		"gives_ammo": 12,
+		"desc": "12 balas. Para el tiro al blanco... o para dormir más tranquilo."},
 }
 
 var money := 0
@@ -80,6 +93,7 @@ var day := 1
 var day_active := true
 var day_income := {"chatarra": 0, "piezas": 0, "bonos": 0}
 var upgrades := {}  # id del catálogo -> nivel comprado (1-based)
+var ammo := 0  # balas del revólver (consumible de la tienda)
 
 ## Hora del mundo (0-24). La jornada arranca a las 06:00 y el reloj solo
 ## corre con la jornada activa; un día completo dura seconds_per_game_day.
@@ -133,10 +147,20 @@ func upgrade_level(id: String) -> int:
 	return int(upgrades.get(id, 0))
 
 
-## Compra el siguiente nivel de una mejora si hay dinero. Devuelve si compró.
+## Compra el siguiente nivel de una mejora (o un consumible repetible) si
+## hay dinero. Devuelve si compró.
 func purchase(id: String) -> bool:
+	var info: Dictionary = UPGRADE_CATALOG[id]
+	if info.get("repeatable", false):
+		var cost := int(info["price"])
+		if money < cost:
+			return false
+		add_money(-cost)
+		ammo += int(info.get("gives_ammo", 0))
+		upgrade_purchased.emit(id, upgrade_level(id))
+		return true
 	var level := upgrade_level(id)
-	var levels: Array = UPGRADE_CATALOG[id]["levels"]
+	var levels: Array = info["levels"]
 	if level >= levels.size():
 		return false
 	var price := int(levels[level]["price"])

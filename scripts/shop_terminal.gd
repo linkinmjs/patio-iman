@@ -54,38 +54,53 @@ func _build_rows() -> void:
 		child.queue_free()
 	for id in GameState.UPGRADE_CATALOG:
 		var info: Dictionary = GameState.UPGRADE_CATALOG[id]
-		var levels: Array = info["levels"]
-		var level := GameState.upgrade_level(id)
-
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 16)
-
-		var name_label := Label.new()
-		name_label.text = "%s  [%d/%d]" % [info["name"], level, levels.size()]
-		name_label.custom_minimum_size.x = 250
-		name_label.add_theme_font_size_override("font_size", 18)
-		row.add_child(name_label)
-
-		var desc_label := Label.new()
-		desc_label.text = str(levels[level]["desc"]) if level < levels.size() \
-				else "Nivel máximo."
-		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		desc_label.add_theme_font_size_override("font_size", 15)
-		row.add_child(desc_label)
-
-		var buy := Button.new()
-		buy.custom_minimum_size.x = 90
-		if level < levels.size():
-			var price := int(levels[level]["price"])
-			buy.text = "$%d" % price
-			buy.disabled = GameState.money < price
-			buy.pressed.connect(GameState.purchase.bind(id))
+		var req: String = info.get("requires", "")
+		if req != "" and GameState.upgrade_level(req) == 0:
+			continue  # oculto hasta comprar el requisito
+		if info.get("repeatable", false):
+			# Consumible: por ahora el único es la munición del revólver.
+			_add_row("%s  [×%d]" % [info["name"], GameState.ammo],
+					str(info["desc"]), int(info["price"]), id)
 		else:
-			buy.text = "MAX"
-			buy.disabled = true
-		row.add_child(buy)
-		rows.add_child(row)
+			var levels: Array = info["levels"]
+			var level := GameState.upgrade_level(id)
+			var name_text := "%s  [%d/%d]" % [info["name"], level, levels.size()]
+			if level < levels.size():
+				_add_row(name_text, str(levels[level]["desc"]),
+						int(levels[level]["price"]), id)
+			else:
+				_add_row(name_text, "Nivel máximo.", -1, id)
+
+
+## Una fila del panel; price < 0 = sin nada más para comprar (MAX).
+func _add_row(name_text: String, desc_text: String, price: int, id: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+
+	var name_label := Label.new()
+	name_label.text = name_text
+	name_label.custom_minimum_size.x = 250
+	name_label.add_theme_font_size_override("font_size", 18)
+	row.add_child(name_label)
+
+	var desc_label := Label.new()
+	desc_label.text = desc_text
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	desc_label.add_theme_font_size_override("font_size", 15)
+	row.add_child(desc_label)
+
+	var buy := Button.new()
+	buy.custom_minimum_size.x = 90
+	if price >= 0:
+		buy.text = "$%d" % price
+		buy.disabled = GameState.money < price
+		buy.pressed.connect(GameState.purchase.bind(id))
+	else:
+		buy.text = "MAX"
+		buy.disabled = true
+	row.add_child(buy)
+	rows.add_child(row)
 
 
 func _on_money_changed(_total: int, _delta: int) -> void:

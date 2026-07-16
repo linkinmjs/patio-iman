@@ -80,6 +80,25 @@ Guía de precios: la primera compra debe caer al final de la jornada 1-2
 - Tecla T. Primera compra del sistema de luces; después pueden apilarse
   baterías (consumible) y upgrades de alcance/intensidad.
 
+### 8. Revólver .38 gastado (1 nivel) — $1.200
+- **No es un arma de shooter: es un placebo de control** (ver
+  `prompt-lore.md`, semilla 3): el operario se siente perseguido y compra
+  la sensación de poder hacer algo. Nunca sirve contra lo paranormal.
+- G lo saca; click dispara; **click derecho apunta**: la dispersión baja
+  pero la mira deriva sola (pulso de novato — empeora caminando, mejora
+  agachado). Cadencia lenta. El impacto solo empuja física.
+- **Recarga a mano, bala por bala** (tambor de 6, ~1.1 s por bala, R);
+  un click cierra el tambor antes de completar.
+- **Dos estilos de retroceso a prueba** (alternables en el menú debug F1):
+  A deja la cámara desviada y la corregís vos; B la devuelve sola casi
+  hasta donde estaba, pero nunca exacto.
+- Lo más útil que se puede hacer con él: el tiro al blanco con latas
+  contra la pared sur.
+
+### 9. Caja de balas .38 (repetible) — $150
+- 12 balas por caja, levemente escasas a propósito.
+- Solo aparece en la tienda después de comprar el revólver.
+
 ---
 
 ## Tanda 2 — diseñadas, para próximos hitos

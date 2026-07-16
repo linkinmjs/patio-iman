@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+[ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
 
 [sub_resource type="CapsuleShape3D" id="capsule_player"]
 radius = 0.35
@@ -28,6 +29,26 @@ light_energy = 2.6
 spot_range = 22.0
 spot_angle = 32.0
 
+[node name="Revolver" type="Node3D" parent="Head/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, -0.22, -0.55)
+visible = false
+
+[node name="Canon" type="CSGBox3D" parent="Head/Camera3D/Revolver"]
+size = Vector3(0.05, 0.08, 0.3)
+material = ExtResource("2_mdark")
+
+[node name="Empunadura" type="CSGBox3D" parent="Head/Camera3D/Revolver"]
+transform = Transform3D(1, 0, 0, 0, 0.9397, 0.342, 0, -0.342, 0.9397, 0, -0.1, 0.12)
+size = Vector3(0.045, 0.15, 0.06)
+material = ExtResource("2_mdark")
+
+[node name="Flash" type="OmniLight3D" parent="Head/Camera3D/Revolver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.25)
+visible = false
+light_color = Color(1, 0.75, 0.4, 1)
+light_energy = 4.0
+omni_range = 6.0
+
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="Prompt" type="Label" parent="HUD"]
@@ -44,3 +65,25 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
+
+[node name="Reticula" type="ColorRect" parent="HUD"]
+visible = false
+offset_right = 6.0
+offset_bottom = 6.0
+color = Color(1, 1, 1, 0.85)
+
+[node name="Balas" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = -56.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 2

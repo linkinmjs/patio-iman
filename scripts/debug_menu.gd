@@ -5,6 +5,7 @@ extends CanvasLayer
 @onready var money_button: Button = $Fondo/Filas/Plata
 @onready var ghost_button: Button = $Fondo/Filas/Fantasma
 @onready var hour_button: Button = $Fondo/Filas/Hora
+@onready var recoil_button: Button = $Fondo/Filas/Recoil
 @onready var close_button: Button = $Fondo/Filas/Cerrar
 
 var _ghost := false
@@ -16,6 +17,7 @@ func _ready() -> void:
 	hour_button.pressed.connect(func() -> void:
 		GameState.hour = wrapf(GameState.hour + 2.0, 0.0, 24.0))
 	ghost_button.pressed.connect(_toggle_ghost)
+	recoil_button.pressed.connect(_toggle_recoil)
 	close_button.pressed.connect(_toggle)
 
 
@@ -36,3 +38,14 @@ func _toggle_ghost() -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		player.set_ghost_mode(_ghost)
+
+
+## Alterna en caliente entre los dos estilos de retroceso del revólver,
+## para compararlos jugando.
+func _toggle_recoil() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	if player == null:
+		return
+	player.recoil_style = 1 - player.recoil_style
+	recoil_button.text = "Recoil: %s" % ("B (vuelve solo)" if player.recoil_style == 1 \
+			else "A (queda desviado)")
