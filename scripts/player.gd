@@ -5,8 +5,9 @@ extends CharacterBody3D
 ## desprendida (se lleva a mano, click izq. la lanza); E lee un cartel
 ## (el control se congela mientras dura el diálogo).
 ## Con el revólver comprado: G lo saca/guarda, click izq. dispara, click
-## der. apunta (la mira deriva: el operario no tiene pulso) y R recarga
-## a mano, bala por bala.
+## der. apunta con miras de hierro (el arma se centra y hay que alinear
+## el alza con el guión; el pulso mueve el arma) y R recarga a mano,
+## bala por bala.
 
 @export_group("Movimiento")
 @export var walk_speed := 4.0
@@ -40,9 +41,11 @@ extends CharacterBody3D
 @export var gun_recoil_deg := Vector2(2.5, 5.0)  ## patada de cámara mín/máx
 @export var recoil_recover_speed := 7.0  ## estilo B: fracción devuelta por segundo
 @export var hip_spread_deg := 5.0  ## dispersión sin apuntar
-@export var aim_spread_deg := 0.8  ## dispersión apuntando
-@export var aim_wander_deg := 2.2  ## amplitud de la deriva de la mira
+@export var aim_spread_deg := 0.15  ## apuntando, la bala va adonde miran las miras
+@export var aim_sway_deg := 0.8  ## temblor del arma al apuntar (pulso de novato)
 @export var aim_fov := 65.0
+## Posición del arma apuntando: la línea alza-guión coincide con el ojo.
+@export var ads_position := Vector3(0.0, -0.06, -0.35)
 @export var gun_impulse := 9.0
 @export var gun_range := 60.0
 
@@ -61,7 +64,6 @@ const MAX_PITCH := 1.5  # ~86°, evita gimbal en el cenit
 @onready var gun_flash: OmniLight3D = $Head/Camera3D/Revolver/Flash
 @onready var prompt: Label = $HUD/Prompt
 @onready var ammo_label: Label = $HUD/Balas
-@onready var reticle: ColorRect = $HUD/Reticula
 
 var _pitch := 0.0
 var _carried: RigidBody3D = null
@@ -76,15 +78,18 @@ var _cylinder := 0  # balas en el tambor
 var _reloading := false
 var _reload_left := 0.0
 var _aim := false
-var _aim_wander := Vector2.ZERO  # deriva de la mira (rad): x yaw, y pitch
+var _aim_wander := Vector2.ZERO  # temblor del arma (rad): x yaw, y pitch
 var _wander_time := 0.0
 var _recoil_left := Vector2.ZERO  # retroceso pendiente de devolver (estilo B)
 var _fov_normal := 80.0
+var _hip_pos := Vector3.ZERO  # posición del arma al costado (de la escena)
+var _gun_kick := 0.0  # culatazo visual pendiente de decaer
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_fov_normal = camera.fov
+	_hip_pos = gun_visual.position
 
 
 ## Habilita/deshabilita el control del jugador (p. ej. al entrar al modo grúa).
@@ -99,7 +104,6 @@ func set_control_enabled(enabled: bool) -> void:
 		_loot_target = null
 		_loot_progress = 0.0
 		_aim = false
-		reticle.visible = false
 		prompt.text = ""
 
 
@@ -293,11 +297,12 @@ func _set_gun_out(out: bool) -> void:
 	ammo_label.visible = out
 	if not out:
 		_reloading = false
-		gun_visual.rotation.x = 0.0
 		_aim = false
 		_aim_wander = Vector2.ZERO
 		_recoil_left = Vector2.ZERO
-		reticle.visible = false
+		_gun_kick = 0.0
+		gun_visual.position = _hip_pos
+		gun_visual.rotation = Vector3.ZERO
 		camera.fov = _fov_normal
 	_refresh_ammo()
 
@@ -328,7 +333,9 @@ func _update_gun(delta: float) -> void:
 		if _recoil_left.length() < 0.0005:
 			_recoil_left = Vector2.ZERO
 
-	# Apuntado (mantener click der.): mira más fina pero con pulso de novato.
+	# Apuntado (mantener click der.): el arma se centra y se mira a través
+	# de las miras de hierro. El pulso rota el arma entera — el guión se
+	# desalinea del alza a la vista — y la bala sale adonde apunta el cañón.
 	var aiming := Input.is_action_pressed("precision") and not _reloading
 	if aiming and not _aim:
 		_wander_time = randf() * 20.0  # fase distinta en cada apuntada
@@ -336,7 +343,7 @@ func _update_gun(delta: float) -> void:
 	camera.fov = lerpf(camera.fov, aim_fov if _aim else _fov_normal, 10.0 * delta)
 	if _aim:
 		_wander_time += delta
-		var amp := deg_to_rad(aim_wander_deg)
+		var amp := deg_to_rad(aim_sway_deg)
 		if velocity.length() > 0.5:
 			amp *= 1.6  # caminar empeora el pulso
 		elif Input.is_action_pressed("crouch"):
@@ -346,7 +353,7 @@ func _update_gun(delta: float) -> void:
 				(sin(_wander_time * 2.3 + 0.7) * 0.55 + sin(_wander_time * 3.7) * 0.45) * 0.8) * amp
 	else:
 		_aim_wander = _aim_wander.lerp(Vector2.ZERO, 12.0 * delta)
-	_update_reticle()
+	_update_gun_pose(delta)
 
 	# Recarga a mano, una bala por vez; un click cierra el tambor antes.
 	if _reloading:
@@ -378,27 +385,26 @@ func _update_gun(delta: float) -> void:
 func _start_reload() -> void:
 	_reloading = true
 	_reload_left = reload_time_per_round
-	gun_visual.rotation.x = -0.5  # el arma baja: tambor abierto
 
 
 func _end_reload() -> void:
 	_reloading = false
-	gun_visual.rotation.x = 0.0
 	_refresh_ammo()
 
 
-## Dirección real de la mira: el frente de la cámara más la deriva del pulso.
-func _aim_dir() -> Vector3:
-	return (-camera.global_basis.z) \
-			.rotated(camera.global_basis.y, _aim_wander.x) \
-			.rotated(camera.global_basis.x, _aim_wander.y)
-
-
-func _update_reticle() -> void:
-	reticle.visible = _aim
-	if _aim:
-		reticle.position = camera.unproject_position(
-				camera.global_position + _aim_dir() * 10.0) - reticle.size * 0.5
+## Acomoda el arma: centrada frente al ojo al apuntar (el temblor la rota
+## y desalinea las miras), al costado si no, inclinada con el tambor
+## abierto. El culatazo la empuja hacia atrás y decae solo.
+func _update_gun_pose(delta: float) -> void:
+	_gun_kick = maxf(_gun_kick - 0.4 * delta, 0.0)
+	var target_pos := (ads_position if _aim else _hip_pos) + Vector3(0, 0, _gun_kick)
+	gun_visual.position = gun_visual.position.lerp(target_pos, 14.0 * delta)
+	var target_rot := Vector3.ZERO
+	if _reloading:
+		target_rot.x = -0.5  # tambor abierto
+	elif _aim:
+		target_rot = Vector3(_aim_wander.y, _aim_wander.x, 0.0)
+	gun_visual.rotation = gun_visual.rotation.lerp(target_rot, 18.0 * delta)
 
 
 ## Un tiro del revólver: dispersión y retroceso de novato (el operario no
@@ -412,7 +418,10 @@ func _fire() -> void:
 	_cylinder -= 1
 	_refresh_ammo()
 	var spread := deg_to_rad(aim_spread_deg if _aim else hip_spread_deg)
-	var dir := _aim_dir() \
+	# Apuntando, la bala sale adonde apunta el cañón (miras incluidas,
+	# temblor incluido); de cadera, hacia el frente con dispersión grande.
+	var dir: Vector3 = -gun_visual.global_basis.z if _aim else -camera.global_basis.z
+	dir = dir \
 			.rotated(camera.global_basis.x, randf_range(-spread, spread)) \
 			.rotated(camera.global_basis.y, randf_range(-spread, spread))
 	var query := PhysicsRayQueryParameters3D.create(camera.global_position,
@@ -433,10 +442,9 @@ func _fire() -> void:
 	if recoil_style == 1:
 		_recoil_left += kick * randf_range(0.8, 0.95)
 	gun_flash.visible = true
-	gun_visual.position.z += 0.06  # culatazo visual
+	_gun_kick = 0.09  # culatazo visual: decae solo en _update_gun_pose
 	get_tree().create_timer(0.07).timeout.connect(func() -> void:
-		gun_flash.visible = false
-		gun_visual.position.z -= 0.06)
+		gun_flash.visible = false)
 
 
 ## Modo fantasma del menú de debug: vuelo libre sin colisiones.

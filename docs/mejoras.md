@@ -84,9 +84,12 @@ Guía de precios: la primera compra debe caer al final de la jornada 1-2
 - **No es un arma de shooter: es un placebo de control** (ver
   `prompt-lore.md`, semilla 3): el operario se siente perseguido y compra
   la sensación de poder hacer algo. Nunca sirve contra lo paranormal.
-- G lo saca; click dispara; **click derecho apunta**: la dispersión baja
-  pero la mira deriva sola (pulso de novato — empeora caminando, mejora
-  agachado). Cadencia lenta. El impacto solo empuja física.
+- G lo saca; click dispara; **click derecho apunta con miras de hierro**:
+  el arma se centra frente al ojo y hay que alinear el alza con el guión
+  amarillo. El pulso de novato mueve el arma entera — las miras se
+  desalinean a la vista (peor caminando, mejor agachado) — y la bala
+  sale adonde apunta el cañón. Cadencia lenta, sin retícula en pantalla.
+  El impacto solo empuja física.
 - **Recarga a mano, bala por bala** (tambor de 6, ~1.1 s por bala, R);
   un click cierra el tambor antes de completar.
 - **Dos estilos de retroceso a prueba** (alternables en el menú debug F1):

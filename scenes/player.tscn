@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
+[ext_resource type="Material" path="res://assets/materials/greybox_yellow_solid.tres" id="3_myellow"]
 
 [sub_resource type="CapsuleShape3D" id="capsule_player"]
 radius = 0.35
@@ -42,6 +43,21 @@ transform = Transform3D(1, 0, 0, 0, 0.9397, 0.342, 0, -0.342, 0.9397, 0, -0.1, 0
 size = Vector3(0.045, 0.15, 0.06)
 material = ExtResource("2_mdark")
 
+[node name="MiraDelantera" type="CSGBox3D" parent="Head/Camera3D/Revolver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.045, -0.14)
+size = Vector3(0.008, 0.03, 0.008)
+material = ExtResource("3_myellow")
+
+[node name="AlzaIzq" type="CSGBox3D" parent="Head/Camera3D/Revolver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.014, 0.05, 0.135)
+size = Vector3(0.008, 0.02, 0.008)
+material = ExtResource("2_mdark")
+
+[node name="AlzaDer" type="CSGBox3D" parent="Head/Camera3D/Revolver"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.014, 0.05, 0.135)
+size = Vector3(0.008, 0.02, 0.008)
+material = ExtResource("2_mdark")
+
 [node name="Flash" type="OmniLight3D" parent="Head/Camera3D/Revolver"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.25)
 visible = false
@@ -65,12 +81,6 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
-
-[node name="Reticula" type="ColorRect" parent="HUD"]
-visible = false
-offset_right = 6.0
-offset_bottom = 6.0
-color = Color(1, 1, 1, 0.85)
 
 [node name="Balas" type="Label" parent="HUD"]
 visible = false
