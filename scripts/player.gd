@@ -183,6 +183,14 @@ func _update_interaction(delta: float) -> void:
 				_loot_progress = 0.0
 		else:
 			prompt.text = "Lootear — mantener [E]"
+	elif target is RigidBody3D and target.is_in_group("trofeo"):
+		_loot_target = null
+		_loot_progress = 0.0
+		prompt.text = "Guardar trofeo [E]"
+		if Input.is_action_just_pressed("interact"):
+			GameState.collect_trophy(str(target.get_meta("trophy_id", "trofeo")),
+					str(target.get_meta("trophy_name", "Trofeo")))
+			target.queue_free()
 	elif target is StaticBody3D and target.is_in_group("cartel"):
 		_loot_target = null
 		_loot_progress = 0.0
@@ -433,6 +441,10 @@ func _fire() -> void:
 			var impact: Vector3 = hit["position"]
 			body.apply_impulse(dir * gun_impulse, impact - body.global_position)
 			body.sleeping = false
+		# Hook genérico: cualquier cosa baleable declara on_shot() (OVNI,
+		# futuros blancos con puntaje) sin acoplarse al player.
+		if body != null and body.has_method("on_shot"):
+			body.on_shot()
 	# Retroceso: salto de cámara; en estilo B casi todo se devuelve solo.
 	var kick := Vector2(deg_to_rad(randf_range(-1.5, 1.5)),
 			deg_to_rad(randf_range(gun_recoil_deg.x, gun_recoil_deg.y)))

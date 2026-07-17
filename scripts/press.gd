@@ -118,7 +118,9 @@ func _try_compact() -> void:
 	await up.finished
 
 	car_compacted.emit(block)
-	if bonus > 0:
+	# El bono es un ingreso: fuera de la ventana productiva no se paga
+	# (compactar de madrugada sirve solo para dejar preparado).
+	if bonus > 0 and GameState.can_earn():
 		GameState.register_income("bonos", bonus)
 		console_label.text = "¡Maniobra perfecta! +$%d" % bonus
 		await get_tree().create_timer(1.5).timeout

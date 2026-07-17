@@ -24,7 +24,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_cooldown = maxf(_cooldown - delta, 0.0)
-	if not GameState.day_active:
+	if not GameState.can_earn():
 		label.text = "Recepción — cerrada"
 		return
 	var quota := cars_per_day + int(GameState.effect("extra_cars_per_day", 0))

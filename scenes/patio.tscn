@@ -21,6 +21,10 @@
 [ext_resource type="PackedScene" path="res://scenes/debug_menu.tscn" id="19_debug"]
 [ext_resource type="Script" path="res://scripts/day_night.gd" id="20_ciclo"]
 [ext_resource type="PackedScene" path="res://scenes/shooting_range.tscn" id="21_tiro"]
+[ext_resource type="PackedScene" path="res://scenes/bunkhouse.tscn" id="22_cama"]
+[ext_resource type="PackedScene" path="res://scenes/rain.tscn" id="23_lluvia"]
+[ext_resource type="Script" path="res://scripts/ufo_spawner.gd" id="24_ovni"]
+[ext_resource type="PackedScene" path="res://scenes/prowler.tscn" id="25_mero"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -158,6 +162,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 10)
 [node name="Desconocido" parent="." instance=ExtResource("17_desc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -30.9)
 
+[node name="Lluvia" parent="." instance=ExtResource("23_lluvia")]
+
+[node name="OvniSpawner" type="Node3D" parent="."]
+script = ExtResource("24_ovni")
+
+[node name="Merodeador" parent="." instance=ExtResource("25_mero")]
+
 [node name="CicloDia" type="Node" parent="."]
 script = ExtResource("20_ciclo")
 
@@ -177,6 +188,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -28.5)
 
 [node name="TiroAlBlanco" parent="." instance=ExtResource("21_tiro")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 29)
+
+[node name="Casilla" parent="." instance=ExtResource("22_cama")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 17)
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=716216466]
 

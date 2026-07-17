@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StandardMaterial3D" id="mat_trofeo"]
+albedo_color = Color(0.9, 0.75, 0.3, 1)
+metallic = 0.6
+roughness = 0.35
+emission_enabled = true
+emission = Color(0.6, 0.45, 0.1, 1)
+emission_energy_multiplier = 0.5
+
+[sub_resource type="BoxShape3D" id="shape_trofeo"]
+size = Vector3(0.25, 0.25, 0.25)
+
+[sub_resource type="PhysicsMaterial" id="fis_trofeo"]
+friction = 1.0
+bounce = 0.2
+
+[node name="Trofeo" type="RigidBody3D" groups=["trofeo"]]
+collision_mask = 3
+mass = 2.0
+physics_material_override = SubResource("fis_trofeo")
+continuous_cd = true
+metadata/trophy_id = "fragmento_ovni"
+metadata/trophy_name = "Fragmento del disco"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("shape_trofeo")
+
+[node name="Visual" type="CSGBox3D" parent="."]
+size = Vector3(0.25, 0.25, 0.25)
+material = SubResource("mat_trofeo")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+billboard = 1
+visibility_range_end = 14.0
+text = "Trofeo [E]"
+font_size = 36
+outline_size = 6

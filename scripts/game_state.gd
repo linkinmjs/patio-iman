@@ -11,6 +11,7 @@ signal money_changed(total: int, delta: int)
 signal day_started(day: int)
 signal day_ended(day: int, summary: Dictionary)
 signal upgrade_purchased(id: String, level: int)
+signal trophy_collected(id: String)
 
 ## Los valores de "effects" son absolutos (pisan al anterior) salvo los
 ## sufijos _mult (multiplicador del valor base) y extra_ (aditivos).
@@ -88,22 +89,67 @@ const UPGRADE_CATALOG := {
 		"desc": "12 balas. Para el tiro al blanco... o para dormir más tranquilo."},
 }
 
+## Clima del día: se sortea al despertar. Sus parámetros modulan visuales
+## y física en quien los lea: "sun" multiplica la luz, "fog_add" suma
+## niebla, "grey" desatura el cielo, "wind" excita el péndulo del imán y
+## "rain" activa las partículas de lluvia.
+const WEATHERS := {
+	"despejado": {"sun": 1.0, "fog_add": 0.0, "grey": 0.0, "wind": 0.0, "rain": 0.0},
+	"nublado": {"sun": 0.45, "fog_add": 0.002, "grey": 0.75, "wind": 0.2, "rain": 0.0},
+	"niebla": {"sun": 0.55, "fog_add": 0.028, "grey": 0.55, "wind": 0.0, "rain": 0.0},
+	"lluvia": {"sun": 0.35, "fog_add": 0.008, "grey": 0.9, "wind": 0.5, "rain": 1.0},
+	"ventoso": {"sun": 0.85, "fog_add": 0.0, "grey": 0.2, "wind": 1.0, "rain": 0.0},
+}
+## Bolsa de sorteo: repetir un clima lo hace más probable.
+const WEATHER_POOL := ["despejado", "despejado", "despejado", "nublado", "nublado",
+		"niebla", "lluvia", "ventoso"]
+
 var money := 0
 var day := 1
 var day_active := true
 var day_income := {"chatarra": 0, "piezas": 0, "bonos": 0}
+var weather := "despejado"
 var upgrades := {}  # id del catálogo -> nivel comprado (1-based)
 var ammo := 0  # balas del revólver (consumible de la tienda)
+var trophies := {}  # colección: trophy_id -> nombre visible
 
-## Hora del mundo (0-24). La jornada arranca a las 06:00 y el reloj solo
-## corre con la jornada activa; un día completo dura seconds_per_game_day.
-var hour := 6.0
+## Hora del mundo (0-24). La jornada arranca a las 09:00 al despertar y el
+## reloj corre hasta congelarse a las 03:00: ahí la única salida es dormir
+## en la casilla. Desde la medianoche el patio no genera ingresos (las
+## ventas y la recepción esperan a la mañana); todo configurable hasta
+## desarrollar el lore. Un día completo dura seconds_per_game_day.
+var hour := 9.0
 var seconds_per_game_day := 1200.0
+var day_start_hour := 9.0   ## hora a la que se despierta
+var clock_stop_hour := 3.0  ## el reloj se congela acá hasta ir a dormir
+var earn_from_hour := 9.0   ## ventana productiva: de acá a la medianoche
+var sleep_from_hour := 22.0 ## desde esta hora se puede ir a dormir
+var clock_stopped := false
+
+
+func _ready() -> void:
+	weather = WEATHER_POOL[randi() % WEATHER_POOL.size()]
 
 
 func _process(delta: float) -> void:
-	if day_active:
-		hour = wrapf(hour + delta * 24.0 / seconds_per_game_day, 0.0, 24.0)
+	if not day_active or clock_stopped:
+		return
+	var prev := hour
+	hour = wrapf(hour + delta * 24.0 / seconds_per_game_day, 0.0, 24.0)
+	# Madrugada: al cruzar la hora límite el reloj se planta.
+	if prev < clock_stop_hour and hour >= clock_stop_hour and hour < 12.0:
+		hour = clock_stop_hour
+		clock_stopped = true
+
+
+## Ventana productiva: de la mañana a la medianoche. De madrugada se puede
+## seguir trabajando (dejar todo preparado) pero nada paga ni entran autos.
+func can_earn() -> bool:
+	return day_active and hour >= earn_from_hour
+
+
+func can_sleep() -> bool:
+	return day_active and (hour >= sleep_from_hour or hour <= clock_stop_hour)
 
 
 func add_money(amount: int) -> void:
@@ -131,8 +177,23 @@ func start_next_day() -> void:
 	for category in day_income:
 		day_income[category] = 0
 	day_active = true
-	hour = 6.0
+	hour = day_start_hour
+	clock_stopped = false
+	weather = WEATHER_POOL[randi() % WEATHER_POOL.size()]
 	day_started.emit(day)
+
+
+func weather_value(key: String) -> float:
+	return float(WEATHERS[weather].get(key, 0.0))
+
+
+## Suma un trofeo a la colección (una sola vez por id); el estante de la
+## casilla la refleja. Los trofeos cuentan historias, no pagan dinero.
+func collect_trophy(id: String, display_name: String) -> void:
+	if trophies.has(id):
+		return
+	trophies[id] = display_name
+	trophy_collected.emit(id)
 
 
 func is_night() -> bool:

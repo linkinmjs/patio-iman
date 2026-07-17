@@ -1,0 +1,108 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/bed.gd" id="1_cama"]
+[ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
+[ext_resource type="Material" path="res://assets/materials/greybox_grey_solid_2.tres" id="3_mgrey"]
+[ext_resource type="Script" path="res://scripts/trophy_shelf.gd" id="4_estante"]
+
+[sub_resource type="StandardMaterial3D" id="mat_colchon"]
+albedo_color = Color(0.55, 0.52, 0.42, 1)
+roughness = 0.9
+
+[sub_resource type="SphereShape3D" id="shape_cama"]
+radius = 2.0
+
+[node name="Casilla" type="Node3D"]
+script = ExtResource("1_cama")
+
+[node name="PisoCasilla" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+use_collision = true
+size = Vector3(3, 0.1, 3.4)
+material = ExtResource("3_mgrey")
+
+[node name="ParedFondo" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 1.2, 0)
+use_collision = true
+size = Vector3(0.1, 2.4, 3.4)
+material = ExtResource("2_mdark")
+
+[node name="Techo" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.45, 0)
+use_collision = true
+size = Vector3(3.2, 0.1, 3.6)
+material = ExtResource("2_mdark")
+
+[node name="Poste1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45, 1.2, -1.6)
+use_collision = true
+size = Vector3(0.12, 2.4, 0.12)
+material = ExtResource("2_mdark")
+
+[node name="Poste2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45, 1.2, 1.6)
+use_collision = true
+size = Vector3(0.12, 2.4, 0.12)
+material = ExtResource("2_mdark")
+
+[node name="Catre" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.3, 0)
+use_collision = true
+size = Vector3(1, 0.4, 2.1)
+material = ExtResource("2_mdark")
+
+[node name="Colchon" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.56, 0)
+size = Vector3(0.95, 0.14, 2)
+material = SubResource("mat_colchon")
+
+[node name="Estante" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 1.35, 0)
+script = ExtResource("4_estante")
+
+[node name="Tabla" type="CSGBox3D" parent="Estante"]
+size = Vector3(0.3, 0.06, 1.6)
+material = ExtResource("2_mdark")
+
+[node name="Nombre" type="Label3D" parent="Estante"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.45, 0)
+visible = false
+billboard = 1
+visibility_range_end = 8.0
+font_size = 28
+outline_size = 6
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+billboard = 1
+text = "Dormir [E]"
+font_size = 44
+outline_size = 8
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("shape_cama")
+
+[node name="Pantalla" type="CanvasLayer" parent="."]
+visible = false
+layer = 5
+
+[node name="Fade" type="ColorRect" parent="Pantalla"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0)
+
+[node name="Texto" type="Label" parent="Pantalla/Fade"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1

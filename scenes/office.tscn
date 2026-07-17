@@ -18,7 +18,7 @@ material = ExtResource("2_mdark")
 [node name="Label3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 billboard = 1
-text = "Terminar jornada [E]"
+text = "Balance del día [E]"
 font_size = 48
 outline_size = 8
 

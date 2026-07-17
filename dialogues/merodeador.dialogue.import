@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://trrmiioifhs1"
+path="res://.godot/imported/merodeador.dialogue-5f03ef548e0d2e6f5d8eb4cf70321d62.tres"
+
+[deps]
+
+source_file="res://dialogues/merodeador.dialogue"
+dest_files=["res://.godot/imported/merodeador.dialogue-5f03ef548e0d2e6f5d8eb4cf70321d62.tres"]
+
+[params]
+
+defaults=true

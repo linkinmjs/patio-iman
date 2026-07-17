@@ -11,7 +11,7 @@ script = ExtResource("1_debug")
 offset_left = 16.0
 offset_top = 60.0
 offset_right = 296.0
-offset_bottom = 356.0
+offset_bottom = 400.0
 color = Color(0, 0, 0, 0.72)
 
 [node name="Filas" type="VBoxContainer" parent="Fondo"]
@@ -46,6 +46,10 @@ text = "+2 horas"
 [node name="Recoil" type="Button" parent="Fondo/Filas"]
 layout_mode = 2
 text = "Recoil: A (queda desviado)"
+
+[node name="Clima" type="Button" parent="Fondo/Filas"]
+layout_mode = 2
+text = "Clima siguiente"
 
 [node name="Cerrar" type="Button" parent="Fondo/Filas"]
 layout_mode = 2

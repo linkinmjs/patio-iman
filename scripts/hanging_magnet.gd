@@ -110,6 +110,12 @@ func _physics_process(delta: float) -> void:
 	var sway_accel := Vector2(
 			-(sway_gravity / cl) * _sway.x - pivot_accel.x / cl - damping * _sway_vel.x,
 			-(sway_gravity / cl) * _sway.y - pivot_accel.z / cl - damping * _sway_vel.y)
+	# Los días de viento (clima) el péndulo nunca se queda del todo quieto.
+	var wind: float = GameState.weather_value("wind")
+	if wind > 0.0:
+		var tw := Time.get_ticks_msec() * 0.001
+		sway_accel += Vector2(sin(tw * 0.9) + sin(tw * 2.3) * 0.4,
+				sin(tw * 1.3 + 2.0) + sin(tw * 3.1) * 0.4) * (0.35 * wind)
 	_sway_vel += sway_accel * delta
 	_sway = (_sway + _sway_vel * delta).limit_length(max_sway)
 

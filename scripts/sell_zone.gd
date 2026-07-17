@@ -19,6 +19,13 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	# Fuera de la ventana productiva no compra: lo depositado espera acá
+	# y se vende solo a la mañana (se puede dejar todo preparado).
+	if not GameState.can_earn():
+		label.text = _base_text + "\n(cerrado hasta las 9:00)"
+		return
+	if label.text.begins_with(_base_text + "\n"):
+		label.text = _base_text
 	for body in area.get_overlapping_bodies():
 		if body is RigidBody3D and body.is_in_group(accepted_group) \
 				and not body.freeze and not _selling.has(body) \

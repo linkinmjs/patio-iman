@@ -6,6 +6,7 @@ extends CanvasLayer
 @onready var ghost_button: Button = $Fondo/Filas/Fantasma
 @onready var hour_button: Button = $Fondo/Filas/Hora
 @onready var recoil_button: Button = $Fondo/Filas/Recoil
+@onready var weather_button: Button = $Fondo/Filas/Clima
 @onready var close_button: Button = $Fondo/Filas/Cerrar
 
 var _ghost := false
@@ -14,10 +15,10 @@ var _ghost := false
 func _ready() -> void:
 	visible = false
 	money_button.pressed.connect(func() -> void: GameState.add_money(5000))
-	hour_button.pressed.connect(func() -> void:
-		GameState.hour = wrapf(GameState.hour + 2.0, 0.0, 24.0))
+	hour_button.pressed.connect(_skip_hours)
 	ghost_button.pressed.connect(_toggle_ghost)
 	recoil_button.pressed.connect(_toggle_recoil)
+	weather_button.pressed.connect(_cycle_weather)
 	close_button.pressed.connect(_toggle)
 
 
@@ -32,12 +33,28 @@ func _toggle() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if visible else Input.MOUSE_MODE_CAPTURED
 
 
+## Salta la hora respetando el tope de las 03:00: si el salto cae en la
+## madrugada muerta, el reloj queda plantado ahí como en el juego normal.
+func _skip_hours() -> void:
+	GameState.hour = wrapf(GameState.hour + 2.0, 0.0, 24.0)
+	if GameState.hour > GameState.clock_stop_hour and GameState.hour < GameState.day_start_hour:
+		GameState.hour = GameState.clock_stop_hour
+		GameState.clock_stopped = true
+
+
 func _toggle_ghost() -> void:
 	_ghost = not _ghost
 	ghost_button.text = "Modo fantasma: %s" % ("ON" if _ghost else "OFF")
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
 		player.set_ghost_mode(_ghost)
+
+
+func _cycle_weather() -> void:
+	var keys: Array = GameState.WEATHERS.keys()
+	var i: int = keys.find(GameState.weather)
+	GameState.weather = keys[(i + 1) % keys.size()]
+	weather_button.text = "Clima: %s" % GameState.weather
 
 
 ## Alterna en caliente entre los dos estilos de retroceso del revólver,
