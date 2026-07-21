@@ -62,21 +62,29 @@ func _cycle_weather() -> void:
 
 
 func _force_ufo() -> void:
-	var spawner = get_tree().root.get_child(0).get_node_or_null("OvniSpawner")
+	# El debug menu está dentro de Patio, así que get_parent() nos da la raíz
+	var patio = get_parent()
+	var spawner = patio.get_node_or_null("OvniSpawner") if patio else null
 	if spawner and spawner.has_method("force_launch"):
 		spawner.force_launch()
 		ufo_button.text = "OVNI: ¡lanzado!"
 		await get_tree().create_timer(1.0).timeout
 		ufo_button.text = "Forzar OVNI"
+	else:
+		print("Debug: OvniSpawner no encontrado en ", patio)
 
 
 func _force_prowler() -> void:
-	var prowler = get_tree().root.get_child(0).get_node_or_null("Merodeador")
+	# El debug menu está dentro de Patio, así que get_parent() nos da la raíz
+	var patio = get_parent()
+	var prowler = patio.get_node_or_null("Merodeador") if patio else null
 	if prowler and prowler.has_method("force_appear"):
 		prowler.force_appear()
 		prowler_button.text = "Merodeador: ¡apareciendo!"
 		await get_tree().create_timer(1.0).timeout
 		prowler_button.text = "Forzar Merodeador"
+	else:
+		print("Debug: Merodeador no encontrado en ", patio)
 
 
 ## Alterna en caliente entre los dos estilos de retroceso del revólver,
