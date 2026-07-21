@@ -30,6 +30,14 @@ func _ready() -> void:
 	_reset()
 
 
+func force_appear() -> void:
+	if _done_tonight:
+		return
+	var player = get_tree().get_first_node_in_group("player")
+	if player:
+		_appear(player)
+
+
 func _reset() -> void:
 	_done_tonight = false
 	_armed_tonight = GameState.day >= min_day and randf() < chance

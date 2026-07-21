@@ -11,7 +11,7 @@ script = ExtResource("1_debug")
 offset_left = 16.0
 offset_top = 60.0
 offset_right = 296.0
-offset_bottom = 400.0
+offset_bottom = 480.0
 color = Color(0, 0, 0, 0.72)
 
 [node name="Filas" type="VBoxContainer" parent="Fondo"]
@@ -50,6 +50,14 @@ text = "Recoil: A (queda desviado)"
 [node name="Clima" type="Button" parent="Fondo/Filas"]
 layout_mode = 2
 text = "Clima siguiente"
+
+[node name="Ovni" type="Button" parent="Fondo/Filas"]
+layout_mode = 2
+text = "Forzar OVNI"
+
+[node name="Merodeador" type="Button" parent="Fondo/Filas"]
+layout_mode = 2
+text = "Forzar Merodeador"
 
 [node name="Cerrar" type="Button" parent="Fondo/Filas"]
 layout_mode = 2

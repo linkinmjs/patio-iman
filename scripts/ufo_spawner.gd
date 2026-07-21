@@ -36,6 +36,13 @@ func _physics_process(_delta: float) -> void:
 		_launch()
 
 
+func force_launch() -> void:
+	if _done_today:
+		return
+	_done_today = true
+	_launch()
+
+
 func _launch() -> void:
 	var angle := randf() * TAU
 	var edge := Vector3(cos(angle), 0.0, sin(angle)) * area_radius
