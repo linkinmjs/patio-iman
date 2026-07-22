@@ -22,6 +22,7 @@ var _state := State.HIDDEN
 var _armed_tonight := false
 var _done_tonight := false
 var _flash_left := 0.0
+var _forced := false  ## debug: aparición forzada ignora restricciones
 
 
 func _ready() -> void:
@@ -31,10 +32,10 @@ func _ready() -> void:
 
 
 func force_appear() -> void:
-	if _done_tonight:
-		return
+	# Para debug: aparece sin importar la hora, el día, o si está armado.
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
+		_forced = true
 		_appear(player)
 
 
@@ -76,7 +77,8 @@ func _appear(player: Node3D) -> void:
 
 
 func _stalk(player, delta: float) -> void:
-	if not GameState.is_night():
+	# Si fue forzado en debug, ignora la restricción de noche.
+	if not _forced and not GameState.is_night():
 		_vanish()
 		return
 	var target: Vector3 = player.global_position

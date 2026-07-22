@@ -37,9 +37,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func force_launch() -> void:
-	if _done_today:
-		return
-	_done_today = true
+	# Para debug: lanzar sin restricciones. No marca _done_today para permitir
+	# múltiples lanzamientos en la misma noche al testear.
 	_launch()
 
 
