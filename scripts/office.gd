@@ -25,7 +25,8 @@ func _physics_process(_delta: float) -> void:
 			panel.visible = false
 			_showing = false
 		return
-	if _player_near and Input.is_action_just_pressed("interact"):
+	if _player_near and not GameState.is_player_busy() \
+			and Input.is_action_just_pressed("interact"):
 		_show_balance()
 
 

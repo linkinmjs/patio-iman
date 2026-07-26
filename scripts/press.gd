@@ -48,7 +48,7 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if not _player_near or _busy:
+	if not _player_near or _busy or GameState.is_player_busy():
 		return
 	console_label.text = _prompt_text()
 	if Input.is_action_just_pressed("interact"):
@@ -95,9 +95,19 @@ func _try_compact() -> void:
 	down.set_parallel(true)
 	down.tween_property(plate, "position:y", plate_bottom_y, cycle * 0.7) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	down.tween_property(car, "scale", squash_scale, cycle * 0.7) \
+	# El aplastado va por tween_method con guarda: si otro sistema libera el
+	# auto a mitad de ciclo, un tween directo sobre él moriría sin emitir
+	# finished y la prensa quedaría trabada en _busy para siempre.
+	var start_scale := car.scale
+	var squash := func(t: float) -> void:
+		if is_instance_valid(car):
+			car.scale = start_scale.lerp(squash_scale, t)
+	down.tween_method(squash, 0.0, 1.0, cycle * 0.7) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await down.finished
+	if not is_instance_valid(car):
+		_busy = false
+		return
 
 	# El auto aplastado se reemplaza por un bloque rígido con forma de
 	# ladrillo, conservando posición y rumbo.

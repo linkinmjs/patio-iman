@@ -1,3 +1,4 @@
+class_name CarPart
 extends RigidBody3D
 ## Parte servible desprendida de un auto al lootearlo. El player la lleva a
 ## mano hasta el pozo, que paga según su tipo. El valor queda en la meta

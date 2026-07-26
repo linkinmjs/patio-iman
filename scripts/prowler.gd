@@ -23,6 +23,7 @@ var _armed_tonight := false
 var _done_tonight := false
 var _flash_left := 0.0
 var _forced := false  ## debug: aparición forzada ignora restricciones
+var _player: Player = null  # cacheado en la primera búsqueda
 
 
 func _ready() -> void:
@@ -33,10 +34,15 @@ func _ready() -> void:
 
 func force_appear() -> void:
 	# Para debug: aparece sin importar la hora, el día, o si está armado.
-	var player = get_tree().get_first_node_in_group("player")
-	if player:
+	if _find_player():
 		_forced = true
-		_appear(player)
+		_appear(_player)
+
+
+func _find_player() -> bool:
+	if _player == null:
+		_player = get_tree().get_first_node_in_group("player") as Player
+	return _player != null
 
 
 func _reset() -> void:
@@ -47,16 +53,15 @@ func _reset() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var player = get_tree().get_first_node_in_group("player")
-	if player == null:
+	if not _find_player():
 		return
 	match _state:
 		State.HIDDEN:
 			if _armed_tonight and not _done_tonight and GameState.is_night() \
 					and _continuous_hour() >= appear_hour:
-				_appear(player)
+				_appear(_player)
 		State.STALKING:
-			_stalk(player, delta)
+			_stalk(_player, delta)
 
 
 func _continuous_hour() -> float:
@@ -64,7 +69,7 @@ func _continuous_hour() -> float:
 	return h + 24.0 if h < 9.0 else h
 
 
-func _appear(player: Node3D) -> void:
+func _appear(player: Player) -> void:
 	_state = State.STALKING
 	_flash_left = flash_time
 	var angle := randf() * TAU
@@ -76,7 +81,7 @@ func _appear(player: Node3D) -> void:
 	body.visible = true
 
 
-func _stalk(player, delta: float) -> void:
+func _stalk(player: Player, delta: float) -> void:
 	# Si fue forzado en debug, ignora la restricción de noche.
 	if not _forced and not GameState.is_night():
 		_vanish()
@@ -85,7 +90,10 @@ func _stalk(player, delta: float) -> void:
 	look_at(Vector3(target.x, global_position.y, target.z))
 	var flat := Vector3(target.x - global_position.x, 0.0, target.z - global_position.z)
 	if flat.length() <= scare_distance:
-		_scare(player)
+		# En una grúa o un panel no hay susto (el zoom dramático pelearía
+		# por el control y la cámara): espera al borde a que vuelva a pie.
+		if player.is_physics_processing():
+			_scare(player)
 		return
 	global_position += flat.normalized() * walk_speed * delta
 	# La linterna sostenida encima lo deshace (¿o nunca estuvo?).
@@ -97,9 +105,8 @@ func _stalk(player, delta: float) -> void:
 		_flash_left = minf(_flash_left + delta * 0.5, flash_time)
 
 
-func _lit_by_flashlight(player) -> bool:
-	var flashlight = player.get_node_or_null("Head/Linterna")
-	if flashlight == null or not flashlight.visible:
+func _lit_by_flashlight(player: Player) -> bool:
+	if not player.flashlight.visible:
 		return false
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
@@ -110,7 +117,7 @@ func _lit_by_flashlight(player) -> bool:
 	return (-cam.global_basis.z).angle_to(to_me.normalized()) < deg_to_rad(14.0)
 
 
-func _scare(player) -> void:
+func _scare(player: Player) -> void:
 	_state = State.LEAVING
 	_done_tonight = true
 	await player.focus_on(global_position + Vector3(0, 1.55, 0), 1.2)

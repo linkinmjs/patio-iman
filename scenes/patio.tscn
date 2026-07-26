@@ -169,8 +169,11 @@ script = ExtResource("24_ovni")
 
 [node name="Merodeador" parent="." instance=ExtResource("25_mero")]
 
-[node name="CicloDia" type="Node" parent="."]
+[node name="CicloDia" type="Node" parent="." node_paths=PackedStringArray("sun", "world_env", "rain")]
 script = ExtResource("20_ciclo")
+sun = NodePath("../Sol")
+world_env = NodePath("../WorldEnvironment")
+rain = NodePath("../Lluvia")
 
 [node name="Farol1" parent="." instance=ExtResource("18_farol")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 17)

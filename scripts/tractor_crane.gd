@@ -24,7 +24,7 @@ extends CharacterBody3D
 
 @onready var turret: Node3D = $Torreta
 @onready var boom_pivot: Node3D = $Torreta/BoomPivot
-@onready var hanging: Node3D = $Torreta/BoomPivot/Codo/Punta/HangingMagnet
+@onready var hanging: HangingMagnet = $Torreta/BoomPivot/Codo/Punta/HangingMagnet
 @onready var cam_yaw: Node3D = $Torreta/CamYaw
 @onready var cam_pitch: Node3D = $Torreta/CamYaw/CamPitch
 @onready var camera: Camera3D = $Torreta/CamYaw/CamPitch/Camera3D
@@ -35,7 +35,7 @@ extends CharacterBody3D
 
 var active := false
 
-var _player: Node3D = null
+var _player: Player = null
 var _player_near := false
 var _speed := 0.0
 
@@ -70,7 +70,8 @@ func _physics_process(delta: float) -> void:
 		_process_controls(delta)
 	else:
 		_speed = lerpf(_speed, 0.0, acceleration * delta)
-		if _player_near and Input.is_action_just_pressed("interact"):
+		if _player_near and not GameState.is_player_busy() \
+				and Input.is_action_just_pressed("interact"):
 			_enter()
 
 	var forward := -transform.basis.z
@@ -158,7 +159,7 @@ func _exit() -> void:
 
 
 func _on_board_body_entered(body: Node3D) -> void:
-	if body.is_in_group("player"):
+	if body is Player:
 		_player = body
 		_player_near = true
 		if not active:
@@ -166,6 +167,6 @@ func _on_board_body_entered(body: Node3D) -> void:
 
 
 func _on_board_body_exited(body: Node3D) -> void:
-	if body.is_in_group("player"):
+	if body is Player:
 		_player_near = false
 		board_label.visible = false

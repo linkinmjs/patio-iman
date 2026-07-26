@@ -126,6 +126,18 @@ var earn_from_hour := 9.0   ## ventana productiva: de acá a la medianoche
 var sleep_from_hour := 22.0 ## desde esta hora se puede ir a dormir
 var clock_stopped := false
 
+## Lock de interacción: true mientras el player no está en control a pie
+## (diálogo, panel, grúa, durmiendo). Los interactuables lo consultan antes
+## de reaccionar a E para no pisarse entre sí (todos pollean Input, que no
+## sabe de eventos consumidos).
+var _player_busy := false
+var _unlock_frame := -1
+
+## Cache de efectos vigentes de las mejoras; se reconstruye al comprar.
+## Consultarlo por clave es O(1): effect() se llama por frame desde el imán
+## y las grúas, y recorrer el catálogo alocaba en esos caminos calientes.
+var _effects_cache := {}
+
 
 func _ready() -> void:
 	weather = WEATHER_POOL[randi() % WEATHER_POOL.size()]
@@ -140,6 +152,20 @@ func _process(delta: float) -> void:
 	if prev < clock_stop_hour and hour >= clock_stop_hour and hour < 12.0:
 		hour = clock_stop_hour
 		clock_stopped = true
+
+
+## El player marca acá cuando pierde/recupera el control a pie. El
+## desbloqueo no libera hasta el tick siguiente: la misma pulsación de E que
+## cierra un panel no debe disparar otro interactuable que pollee después
+## en el mismo tick de física.
+func set_player_busy(busy: bool) -> void:
+	if _player_busy and not busy:
+		_unlock_frame = Engine.get_physics_frames()
+	_player_busy = busy
+
+
+func is_player_busy() -> bool:
+	return _player_busy or Engine.get_physics_frames() <= _unlock_frame
 
 
 ## Ventana productiva: de la mañana a la medianoche. De madrugada se puede
@@ -229,19 +255,26 @@ func purchase(id: String) -> bool:
 		return false
 	add_money(-price)
 	upgrades[id] = level + 1
+	_rebuild_effects_cache()
 	upgrade_purchased.emit(id, level + 1)
 	return true
 
 
-## Valor efectivo de un parámetro según las mejoras compradas: el nivel más
-## alto que declara la clave pisa a los anteriores. Sin compras devuelve el
-## valor base que pasa el llamador.
+## Valor efectivo de un parámetro según las mejoras compradas. Sin compras
+## devuelve el valor base que pasa el llamador.
 func effect(key: String, default_value: float) -> float:
-	var value := default_value
-	for id in upgrades:
-		var levels: Array = UPGRADE_CATALOG[id]["levels"]
-		for i in upgrade_level(id):
-			var fx: Dictionary = levels[i].get("effects", {})
-			if fx.has(key):
-				value = float(fx[key])
-	return value
+	return float(_effects_cache.get(key, default_value))
+
+
+## Se recorre el catálogo en su orden de declaración (no el de compra) para
+## que la resolución de claves repetidas sea determinística; dentro de una
+## mejora, el nivel más alto comprado pisa a los anteriores. Cuando entren
+## los talentos apilando sobre las mismas claves, la semántica de los
+## sufijos (_mult multiplica, extra_ suma) se resuelve acá.
+func _rebuild_effects_cache() -> void:
+	_effects_cache.clear()
+	for id in UPGRADE_CATALOG:
+		var levels: Array = UPGRADE_CATALOG[id].get("levels", [])
+		for i in mini(upgrade_level(id), levels.size()):
+			for key in levels[i].get("effects", {}):
+				_effects_cache[key] = levels[i]["effects"][key]

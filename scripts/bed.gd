@@ -26,7 +26,8 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	match _stage:
 		Stage.AWAKE:
-			if not _player_near:
+			# El lock evita dormirse con un diálogo o un panel abiertos.
+			if not _player_near or GameState.is_player_busy():
 				return
 			if GameState.can_sleep():
 				label.text = "Dormir [E]"
@@ -41,7 +42,7 @@ func _physics_process(_delta: float) -> void:
 
 func _sleep() -> void:
 	_stage = Stage.FALLING_ASLEEP
-	var player = get_tree().get_first_node_in_group("player")
+	var player := get_tree().get_first_node_in_group("player") as Player
 	if player:
 		player.set_control_enabled(false)
 	var s: Dictionary = GameState.end_day()
@@ -68,7 +69,7 @@ func _wake_up() -> void:
 	tw.tween_property(fade, "color:a", 0.0, 1.0)
 	await tw.finished
 	screen.visible = false
-	var player = get_tree().get_first_node_in_group("player")
+	var player := get_tree().get_first_node_in_group("player") as Player
 	if player:
 		player.set_control_enabled(true)
 	_stage = Stage.AWAKE

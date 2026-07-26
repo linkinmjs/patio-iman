@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody3D
 ## Controlador del jugador a pie: WASD, mouse para cámara, Shift trote, C agacharse.
 ## Esc libera el mouse; click dentro de la ventana lo vuelve a capturar.
@@ -66,8 +67,10 @@ const MAX_PITCH := 1.5  # ~86°, evita gimbal en el cenit
 @onready var ammo_label: Label = $HUD/Balas
 
 var _pitch := 0.0
-var _carried: RigidBody3D = null
-var _loot_target: RigidBody3D = null
+var _carried: CarPart = null
+var _carried_layer := 0  # capas originales de la parte, restauradas al soltar
+var _carried_mask := 0
+var _loot_target: Car = null
 var _loot_progress := 0.0
 var _focusing := false
 var _ghost := false
@@ -94,6 +97,7 @@ func _ready() -> void:
 
 ## Habilita/deshabilita el control del jugador (p. ej. al entrar al modo grúa).
 func set_control_enabled(enabled: bool) -> void:
+	GameState.set_player_busy(not enabled)
 	set_physics_process(enabled)
 	set_process_unhandled_input(enabled)
 	if enabled:
@@ -163,14 +167,13 @@ func _update_interaction(delta: float) -> void:
 		return
 
 	var target = _aim_target()
-	if target is RigidBody3D and target.is_in_group("parte") and not target.freeze:
+	if target is CarPart and not target.freeze:
 		_loot_target = null
 		_loot_progress = 0.0
 		prompt.text = "Agarrar [E]"
 		if Input.is_action_just_pressed("interact"):
 			_pick_up(target)
-	elif target is RigidBody3D and target.is_in_group("auto") \
-			and not target.freeze and not target.looted:
+	elif target is Car and not target.freeze and not target.looted:
 		if target != _loot_target:
 			_loot_target = target
 			_loot_progress = 0.0
@@ -191,7 +194,7 @@ func _update_interaction(delta: float) -> void:
 			GameState.collect_trophy(str(target.get_meta("trophy_id", "trofeo")),
 					str(target.get_meta("trophy_name", "Trofeo")))
 			target.queue_free()
-	elif target is StaticBody3D and target.is_in_group("cartel"):
+	elif target is Sign:
 		_loot_target = null
 		_loot_progress = 0.0
 		prompt.text = "Leer [E]"
@@ -212,7 +215,7 @@ func play_dialogue(resource: DialogueResource, title := "start") -> void:
 	DialogueManager.show_dialogue_balloon(resource, title)
 
 
-func _start_dialogue(sign_body) -> void:
+func _start_dialogue(sign_body: Sign) -> void:
 	play_dialogue(sign_body.dialogue, sign_body.dialogue_title)
 
 
@@ -270,13 +273,15 @@ func _aim_target():  # Object o null; sin tipo para acceder a props de scripts
 	return hit.get("collider")
 
 
-func _pick_up(part: RigidBody3D) -> void:
+func _pick_up(part: CarPart) -> void:
 	if _gun_out:
 		_set_gun_out(false)  # las dos manos van a la parte
 	_carried = part
 	part.freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
 	part.freeze = true
 	# Sin colisión mientras se lleva, para que no empuje al player.
+	_carried_layer = part.collision_layer
+	_carried_mask = part.collision_mask
 	part.collision_layer = 0
 	part.collision_mask = 0
 	_hold_carried()
@@ -291,8 +296,8 @@ func _hold_carried() -> void:
 func _drop(speed: float) -> void:
 	var part := _carried
 	_carried = null
-	part.collision_layer = 1
-	part.collision_mask = 3
+	part.collision_layer = _carried_layer
+	part.collision_mask = _carried_mask
 	part.freeze = false
 	part.sleeping = false
 	part.linear_velocity = velocity - head.global_basis.z * speed
@@ -483,6 +488,8 @@ func _update_height(crouching: bool, delta: float) -> void:
 	var shape: CapsuleShape3D = collision_shape.shape
 	var target_height := CROUCH_HEIGHT if crouching else STAND_HEIGHT
 	var target_eye := CROUCH_EYE if crouching else STAND_EYE
+	if absf(shape.height - target_height) < 0.001:
+		return  # ya convergió: reasignar el shape lo reconstruye en Jolt
 	shape.height = lerpf(shape.height, target_height, HEIGHT_LERP_SPEED * delta)
 	collision_shape.position.y = shape.height * 0.5
 	head.position.y = lerpf(head.position.y, target_eye, HEIGHT_LERP_SPEED * delta)

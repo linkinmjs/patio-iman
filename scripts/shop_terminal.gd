@@ -9,7 +9,7 @@ extends Node3D
 @onready var panel: CanvasLayer = $Panel
 @onready var rows: VBoxContainer = $Panel/Fondo/Contenido/Filas
 
-var _player: Node3D = null
+var _player: Player = null
 var _player_near := false
 var _showing := false
 
@@ -27,7 +27,8 @@ func _physics_process(_delta: float) -> void:
 		if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("ui_cancel"):
 			_close()
 		return
-	if _player_near and Input.is_action_just_pressed("interact"):
+	if _player_near and not GameState.is_player_busy() \
+			and Input.is_action_just_pressed("interact"):
 		_open()
 
 
@@ -111,13 +112,13 @@ func _on_money_changed(_total: int, _delta: int) -> void:
 
 
 func _on_body_entered(body: Node3D) -> void:
-	if body.is_in_group("player"):
+	if body is Player:
 		_player = body
 		_player_near = true
 		label.visible = true
 
 
 func _on_body_exited(body: Node3D) -> void:
-	if body.is_in_group("player"):
+	if body is Player:
 		_player_near = false
 		label.visible = false

@@ -56,7 +56,7 @@ func _launch() -> void:
 func _reveal(ufo: Node3D) -> void:
 	if _revealed:
 		return
-	var player = get_tree().get_first_node_in_group("player")
+	var player := get_tree().get_first_node_in_group("player") as Player
 	if player == null or not player.is_physics_processing():
 		return  # está en una grúa o un panel: quedará para otra noche
 	_revealed = true

@@ -49,7 +49,7 @@ func _skip_hours() -> void:
 func _toggle_ghost() -> void:
 	_ghost = not _ghost
 	ghost_button.text = "Modo fantasma: %s" % ("ON" if _ghost else "OFF")
-	var player = get_tree().get_first_node_in_group("player")
+	var player := get_tree().get_first_node_in_group("player") as Player
 	if player:
 		player.set_ghost_mode(_ghost)
 
@@ -90,7 +90,7 @@ func _force_prowler() -> void:
 ## Alterna en caliente entre los dos estilos de retroceso del revólver,
 ## para compararlos jugando.
 func _toggle_recoil() -> void:
-	var player = get_tree().get_first_node_in_group("player")
+	var player := get_tree().get_first_node_in_group("player") as Player
 	if player == null:
 		return
 	player.recoil_style = 1 - player.recoil_style

@@ -12,6 +12,7 @@ extends Node3D
 
 var _base_text := ""
 var _selling := {}
+var _closed_label := false  # cartel de cerrado ya puesto, para no rearmarlo por frame
 
 
 func _ready() -> void:
@@ -22,9 +23,12 @@ func _physics_process(_delta: float) -> void:
 	# Fuera de la ventana productiva no compra: lo depositado espera acá
 	# y se vende solo a la mañana (se puede dejar todo preparado).
 	if not GameState.can_earn():
-		label.text = _base_text + "\n(cerrado hasta las 9:00)"
+		if not _closed_label:
+			_closed_label = true
+			label.text = _base_text + "\n(cerrado hasta las 9:00)"
 		return
-	if label.text.begins_with(_base_text + "\n"):
+	if _closed_label:
+		_closed_label = false
 		label.text = _base_text
 	for body in area.get_overlapping_bodies():
 		if body is RigidBody3D and body.is_in_group(accepted_group) \
@@ -39,7 +43,8 @@ func _sell(body: RigidBody3D) -> void:
 	GameState.register_income(income_category, value)
 	label.text = "+$%d" % value
 	get_tree().create_timer(1.5).timeout.connect(func() -> void:
-		label.text = _base_text)
+		if not _closed_label:  # no pisar el cartel si cerró mientras tanto
+			label.text = _base_text)
 
 	# Absorción: se hunde y encoge en vez de desaparecer de golpe.
 	body.freeze = true

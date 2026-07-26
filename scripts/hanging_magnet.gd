@@ -1,3 +1,4 @@
+class_name HangingMagnet
 extends Node3D
 ## Imán electromagnético colgante con lógica de péndulo. Componente compartido:
 ## el nodo raíz es el pivote (lo mueve la grúa que lo instancia) y el imán
@@ -43,6 +44,16 @@ var carried: RigidBody3D = null
 
 var _mat_off: Material
 var _mat_on: StandardMaterial3D
+var _visuals_on := false  # estado ya aplicado, para no reasignar por frame
+
+## Grupos que el colgado puede empujar (se excluyen del test de movimiento).
+const PUSHABLE_GROUPS: Array[StringName] = [&"auto", &"chatarra", &"parte"]
+
+# Reutilizados por _blocked_motion: crearlos por frame alocaba en el camino
+# caliente del transporte.
+var _motion_params := PhysicsTestMotionParameters3D.new()
+var _motion_result := PhysicsTestMotionResult3D.new()
+var _motion_excluded: Array[RID] = []
 
 var _sway := Vector2.ZERO       # desplazamiento angular (rad) en ejes X/Z
 var _sway_vel := Vector2.ZERO
@@ -146,20 +157,19 @@ func _physics_process(delta: float) -> void:
 ## se aflojara. Los cuerpos dinámicos (autos, bloques, partes) se excluyen
 ## del test para que el colgado pueda seguir empujándolos como hasta ahora.
 func _blocked_motion(body: RigidBody3D, target: Transform3D) -> Transform3D:
-	var params := PhysicsTestMotionParameters3D.new()
-	params.from = body.global_transform
-	params.motion = target.origin - body.global_position
-	params.margin = 0.01
-	var excluded: Array[RID] = [magnet_body.get_rid()]
-	for group in ["auto", "chatarra", "parte"]:
+	_motion_params.from = body.global_transform
+	_motion_params.motion = target.origin - body.global_position
+	_motion_params.margin = 0.01
+	_motion_excluded.clear()
+	_motion_excluded.append(magnet_body.get_rid())
+	for group in PUSHABLE_GROUPS:
 		for node in get_tree().get_nodes_in_group(group):
 			if node is RigidBody3D and node != body:
-				excluded.append(node.get_rid())
-	params.exclude_bodies = excluded
-	var result := PhysicsTestMotionResult3D.new()
-	if PhysicsServer3D.body_test_motion(body.get_rid(), params, result):
-		return Transform3D(target.basis,
-				body.global_position + params.motion * result.get_collision_safe_fraction())
+				_motion_excluded.append(node.get_rid())
+	_motion_params.exclude_bodies = _motion_excluded
+	if PhysicsServer3D.body_test_motion(body.get_rid(), _motion_params, _motion_result):
+		return Transform3D(target.basis, body.global_position
+				+ _motion_params.motion * _motion_result.get_collision_safe_fraction())
 	return target
 
 
@@ -213,6 +223,9 @@ func rotate_carried(axis: float, delta: float) -> void:
 
 func _update_power_visuals() -> void:
 	var on := energized or carried != null
+	if on == _visuals_on:
+		return
+	_visuals_on = on
 	magnet_visual.material = _mat_on if on else _mat_off
 	status_light.visible = on
 

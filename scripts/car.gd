@@ -1,3 +1,4 @@
+class_name Car
 extends RigidBody3D
 ## Auto chatarra. Se lootea una única vez (a pie, manteniendo E): desprende
 ## 2-3 partes servibles que saltan del techo. La progresión futura (talentos,

@@ -21,7 +21,7 @@ enum State { HIDDEN, PEEKING, SPOTTED, DONE }
 @onready var head: Node3D = $Cuerpo/Cabeza
 
 var _state := State.HIDDEN
-var _player = null  # sin tipo: usa focus_on/play_dialogue del script del player
+var _player: Player = null
 var _watch_left := 0.0
 var _base_y := 0.0
 
@@ -45,7 +45,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_trigger_entered(node: Node3D) -> void:
-	if _state != State.HIDDEN or not node.is_in_group("player"):
+	if _state != State.HIDDEN or not node is Player:
 		return
 	_player = node
 	_state = State.PEEKING

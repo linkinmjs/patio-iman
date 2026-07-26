@@ -21,7 +21,7 @@ extends Node3D
 
 @onready var bridge: Node3D = $Puente
 @onready var trolley: Node3D = $Puente/Carro
-@onready var hanging: Node3D = $Puente/Carro/HangingMagnet
+@onready var hanging: HangingMagnet = $Puente/Carro/HangingMagnet
 @onready var cam_yaw: Node3D = $Puente/Carro/CamYaw
 @onready var cam_pitch: Node3D = $Puente/Carro/CamYaw/CamPitch
 @onready var camera: Camera3D = $Puente/Carro/CamYaw/CamPitch/Camera3D
@@ -31,7 +31,7 @@ extends Node3D
 
 var active := false
 
-var _player: Node3D = null
+var _player: Player = null
 var _player_near := false
 var _velocity := Vector3.ZERO  # x = carro, y = imán, z = puente
 var _zoom := 9.0
@@ -64,7 +64,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
 	if active:
 		_process_controls(delta)
-	elif _player_near and Input.is_action_just_pressed("interact"):
+	elif _player_near and not GameState.is_player_busy() \
+			and Input.is_action_just_pressed("interact"):
 		_enter()
 
 
@@ -119,7 +120,7 @@ func _exit() -> void:
 
 
 func _on_console_body_entered(body: Node3D) -> void:
-	if body.is_in_group("player"):
+	if body is Player:
 		_player = body
 		_player_near = true
 		if not active:
@@ -127,6 +128,6 @@ func _on_console_body_entered(body: Node3D) -> void:
 
 
 func _on_console_body_exited(body: Node3D) -> void:
-	if body.is_in_group("player"):
+	if body is Player:
 		_player_near = false
 		console_label.visible = false
