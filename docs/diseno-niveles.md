@@ -260,3 +260,31 @@ el túnel) sin construir geometría visible desde afuera — revelación máxima
    sightlines, plantar el landmark de pórtico), validar que el loop sigue siendo divertido.
 4. Tematizar las 3 zonas (materiales/luz) — barato con la paleta low-poly.
 5. Prototipar C1 (irrupción forzada) primero: es el sector de castigo más barato.
+
+## 9. Decisiones de iteración (nivel v1)
+
+Tomadas mientras se arma el nivel real (`scenes/patio_nivel.tscn` +
+`scripts/level_builder.gd`, construido desde la grilla del maquetador).
+
+- **Sin pozo estático — las partes van a un camión.** No se usa `pit.tscn`. Las
+  partes looteadas se depositan en la **caja trasera de un camión** (estilo camión
+  de basura); ese mismo camión (o su par) se lleva la materia prima. La venta de
+  partes pasa a ocurrir en el camión, no en un pozo del piso.
+- **Merodeador con spawn points.** En vez del clamp `±27` de `prowler.gd`, el
+  Merodeador aparecerá en **puntos de spawn específicos** colocados en el nivel
+  (nodos marcadores). Pendiente: cambiar `prowler.gd` para elegir entre esos puntos.
+- **Dificultad temprana por laberinto + grúa que vuela por encima.** El interior del
+  patio es un **laberinto de chatarra**: en early game, llevar el auto de la recepción
+  a la prensa (a pie / con el tractor, rodeando paredes) **ES el desafío**. Al
+  desbloquear la **grúa de pórtico (late)**, el imán levanta el auto **por encima de
+  las paredes** y el traslado recepción → prensa → camión se vuelve directo: la mejora
+  cambia el espacio percibido (patrón "revisitar con nueva capacidad", Metroid).
+  - *Nota técnica pendiente:* la `crane.tscn` real (~28×52 m) apoya sus patas en
+    **rieles** que corren por el piso; el auto colgado vuela, pero los rieles no. Para
+    que la grúa cubra el laberinto sin arruinarlo, sus **rieles deben ir por el
+    perímetro** del recinto de trabajo (o por fuera), con el puente cruzando por arriba.
+    Se define al implementar la mecánica. Por ahora el pórtico es un placeholder alto
+    (`portico_height`, ajustable).
+  - *Cámara (idea):* operar la grúa fija **en primera persona desde una cámara montada
+    en el cabezal/imán** (mirando hacia abajo por donde sale la cuerda), en vez de una
+    cámara externa en 3ª persona. Coherente con el resto del juego (todo 1ª persona). A definir.
