@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cn5s447dxhswk"]
+
+[ext_resource type="Script" path="res://scripts/map_builder.gd" id="1_build"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.38, 0.45, 0.58, 1)
+sky_horizon_color = Color(0.82, 0.72, 0.6, 1)
+ground_bottom_color = Color(0.2, 0.19, 0.17, 1)
+ground_horizon_color = Color(0.82, 0.72, 0.6, 1)
+
+[sub_resource type="Sky" id="sky_res"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+background_mode = 2
+sky = SubResource("sky_res")
+ambient_light_source = 3
+ambient_light_energy = 1.1
+tonemap_mode = 2
+
+[node name="PatioMaqueta" type="Node3D"]
+script = ExtResource("1_build")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sol" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.7071, -0.4056, 0.5793, 0, 0.8192, 0.5736, -0.7071, -0.4056, 0.5793, 0, 40, 0)
+light_color = Color(1, 0.92, 0.82, 1)
+light_energy = 1.2
+shadow_enabled = true
