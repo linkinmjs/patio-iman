@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://bcmokws3wxra3"]
+
+[ext_resource type="Script" path="res://scripts/pause_menu.gd" id="1_pausa"]
+
+[node name="MenuPausa" type="CanvasLayer"]
+process_mode = 3
+layer = 20
+script = ExtResource("1_pausa")
+
+[node name="Velo" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.03, 0.6)
+
+[node name="Centro" type="CenterContainer" parent="Velo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Caja" type="VBoxContainer" parent="Velo/Centro"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Titulo" type="Label" parent="Velo/Centro/Caja"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+theme_override_colors/font_color = Color(0.9, 0.66, 0.28, 1)
+text = "PAUSA"
+horizontal_alignment = 1
+
+[node name="Espacio" type="Control" parent="Velo/Centro/Caja"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Continuar" type="Button" parent="Velo/Centro/Caja"]
+custom_minimum_size = Vector2(280, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Continuar"
+
+[node name="MenuPrincipal" type="Button" parent="Velo/Centro/Caja"]
+custom_minimum_size = Vector2(280, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Salir al menú principal"
+
+[node name="Salir" type="Button" parent="Velo/Centro/Caja"]
+custom_minimum_size = Vector2(280, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Salir del juego"

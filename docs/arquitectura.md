@@ -10,6 +10,15 @@ agregar sistemas nuevos.
 | `GameState` | Hub del estado de partida: dinero, jornada, hora, clima, mejoras, munición, trofeos. **Todo dato compartido entre sistemas vive acá**, nunca en un nodo de escena. |
 | `DialogueManager` | Plugin Dialogue Manager (addons). Los `.dialogue` viven en `dialogues/`. |
 
+## Escenas de nivel
+
+| Escena | Rol |
+|---|---|
+| `main_menu.tscn` | escena principal del proyecto: entrada del juego |
+| `patio.tscn` | el nivel real del juego (mapa editable a mano) |
+| `patio_test.tscn` | patio greybox original, conservado como banco de pruebas |
+| `pause_menu.tscn` | menú de pausa (Esc), instanciado en ambos patios |
+
 ## Patrones establecidos
 
 - **`GameState.effect(clave, valor_base)`** — parámetros modificables por
@@ -48,6 +57,7 @@ agregar sistemas nuevos.
 | `parte` | partes looteadas | agarre a mano, pozo |
 | `trofeo` | coleccionables | guardado con E, estante de la casilla |
 | `cartel` | carteles legibles | diálogo con E |
+| `vehiculo_activo` | la grúa que el player está operando (se agrega en `_enter`, se saca en `_exit`) | el menú de pausa distingue "ocupado manejando" (Esc pausa) de "ocupado en un panel/diálogo" (Esc ya tiene dueño) |
 
 ## Capas de colisión
 

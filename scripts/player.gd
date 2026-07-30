@@ -1,7 +1,7 @@
 class_name Player
 extends CharacterBody3D
 ## Controlador del jugador a pie: WASD, mouse para cámara, Shift trote, C agacharse.
-## Esc libera el mouse; click dentro de la ventana lo vuelve a capturar.
+## Esc abre el menú de pausa; click dentro de la ventana recaptura el mouse.
 ## Mirando de cerca: E mantenido lootea un auto; E agarra/suelta una parte
 ## desprendida (se lleva a mano, click izq. la lanza); E lee un cartel
 ## (el control se congela mientras dura el diálogo).
@@ -91,6 +91,9 @@ var _gun_kick := 0.0  # culatazo visual pendiente de decaer
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	# Sin esto, la cámara activa sería la primera en entrar al árbol (p. ej.
+	# la cabina de la grúa móvil si está antes en la escena).
+	camera.make_current()
 	_fov_normal = camera.fov
 	_hip_pos = gun_visual.position
 
@@ -117,8 +120,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		rotate_y(-event.relative.x * sens)
 		_pitch = clampf(_pitch - event.relative.y * sens, -MAX_PITCH, MAX_PITCH)
 		head.rotation.x = _pitch
-	elif event.is_action_pressed("ui_cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.pressed and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 

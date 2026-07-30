@@ -57,8 +57,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			_zoom = minf(_zoom + 1.0, zoom_range.y)
 		elif event.pressed and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event.is_action_pressed("ui_cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _physics_process(delta: float) -> void:
@@ -104,6 +102,7 @@ func _process_controls(delta: float) -> void:
 
 func _enter() -> void:
 	active = true
+	add_to_group("vehiculo_activo")  # el menú de pausa permite Esc acá
 	console_label.visible = false
 	hud.visible = true
 	_velocity = Vector3.ZERO
@@ -114,6 +113,7 @@ func _enter() -> void:
 
 func _exit() -> void:
 	active = false
+	remove_from_group("vehiculo_activo")
 	console_label.visible = _player_near
 	hud.visible = false
 	_player.set_control_enabled(true)

@@ -22,6 +22,20 @@ extends CharacterBody3D
 @export var mouse_sensitivity := 0.0025
 @export var head_yaw_limit := 2.6
 
+@export_group("Feel tanquecito")
+## Rad de cabeceo por m/s² al arrancar/frenar (la cabina se echa atrás/adelante).
+@export var rock_pitch_per_accel := 0.03
+## Rad de rolido al girar en marcha (la cabina se inclina hacia afuera).
+@export var rock_roll_per_steer := 0.05
+## Qué tan rápido se asienta el balanceo (más bajo = más flotante).
+@export var rock_smoothing := 5.0
+## Metros de vibración del motor a velocidad máxima.
+@export var rumble_amplitude := 0.012
+## Frecuencia aparente del traqueteo diésel.
+@export var rumble_frequency := 30.0
+## Rad máximos de sacudida al forcejear contra algo sólido.
+@export var impact_jolt := 0.05
+
 @onready var turret: Node3D = $Torreta
 @onready var boom_pivot: Node3D = $Torreta/BoomPivot
 @onready var hanging: HangingMagnet = $Torreta/BoomPivot/Codo/Punta/HangingMagnet
@@ -38,6 +52,10 @@ var active := false
 var _player: Player = null
 var _player_near := false
 var _speed := 0.0
+var _prev_speed := 0.0
+var _rock := Vector2.ZERO  # balanceo actual de cabina: x cabeceo, y rolido
+var _jolt := 0.0  # sacudida por choque, decae sola
+var _rumble_t := 0.0
 
 
 func _ready() -> void:
@@ -58,8 +76,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton:
 		if event.pressed and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event.is_action_pressed("ui_cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _physics_process(delta: float) -> void:
@@ -79,6 +95,7 @@ func _physics_process(delta: float) -> void:
 	velocity.z = forward.z * _speed
 	move_and_slide()
 	_push_cars()
+	_update_tank_feel(delta)
 
 
 func _process_controls(delta: float) -> void:
@@ -119,6 +136,36 @@ func _process_controls(delta: float) -> void:
 	cam_yaw.rotation.y -= step
 
 
+## Feel "tanquecito": la cabina cabecea al arrancar/frenar, rola al girar,
+## traquetea con el motor y forcejea al empujar contra algo sólido. Todo se
+## aplica a la cámara (posición/rotación propias, que nadie más toca): la
+## puntería de CamYaw/CamPitch y la física no se enteran.
+func _update_tank_feel(delta: float) -> void:
+	var accel := (_speed - _prev_speed) / maxf(delta, 0.0001)
+	_prev_speed = _speed
+
+	# Forcejeo: la orden pide avanzar pero el vehículo casi no se mueve.
+	var real_speed := Vector2(velocity.x, velocity.z).length()
+	if active and absf(_speed) > 0.8 and real_speed < absf(_speed) * 0.25:
+		_jolt = minf(_jolt + 3.0 * impact_jolt * delta, impact_jolt)
+	_jolt = lerpf(_jolt, 0.0, 6.0 * delta)
+
+	var steer := Input.get_axis("move_left", "move_right") if active else 0.0
+	var speed_ratio := absf(_speed) / maxf(drive_speed, 0.01)
+	var target := Vector2(
+			clampf(accel * rock_pitch_per_accel, -0.09, 0.09),
+			-steer * rock_roll_per_steer * (0.35 + speed_ratio))
+	_rock = _rock.lerp(target, minf(rock_smoothing * delta, 1.0))
+
+	_rumble_t += delta * (0.35 + speed_ratio)
+	var rumble := rumble_amplitude * (0.25 + speed_ratio) if active else 0.0
+	camera.rotation = Vector3(_rock.x + _jolt * sin(_rumble_t * 40.0), 0.0, _rock.y)
+	camera.position = Vector3(
+			sin(_rumble_t * rumble_frequency * 0.83) * rumble * 0.6,
+			absf(sin(_rumble_t * rumble_frequency)) * rumble,
+			0.0)
+
+
 # move_and_slide no transfiere fuerza a los RigidBody: sin esto la grúa se
 # frena en seco contra un auto de frente en vez de empujarlo como un tanque.
 func _push_cars() -> void:
@@ -140,6 +187,7 @@ func _push_cars() -> void:
 
 func _enter() -> void:
 	active = true
+	add_to_group("vehiculo_activo")  # el menú de pausa permite Esc acá
 	board_label.visible = false
 	hud.visible = true
 	_player.set_control_enabled(false)
@@ -150,6 +198,7 @@ func _enter() -> void:
 
 func _exit() -> void:
 	active = false
+	remove_from_group("vehiculo_activo")
 	hud.visible = false
 	_player.global_position = exit_point.global_position
 	_player.velocity = Vector3.ZERO

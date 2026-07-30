@@ -198,6 +198,26 @@ func end_day() -> Dictionary:
 	return summary
 
 
+## Reinicia el estado para una partida nueva (lo llama el menú principal al
+## comenzar jornada; sin esto, volver al menú y re-entrar arrastraría el
+## dinero, la hora y las mejoras de la corrida anterior).
+func reset_run() -> void:
+	money = 0
+	day = 1
+	day_active = true
+	for category in day_income:
+		day_income[category] = 0
+	upgrades = {}
+	ammo = 0
+	trophies = {}
+	hour = day_start_hour
+	clock_stopped = false
+	weather = WEATHER_POOL[randi() % WEATHER_POOL.size()]
+	_effects_cache.clear()
+	_player_busy = false
+	_unlock_frame = -1
+
+
 func start_next_day() -> void:
 	day += 1
 	for category in day_income:
