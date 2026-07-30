@@ -27,6 +27,10 @@ signal car_released(car: RigidBody3D)
 @export var pull_accel := 16.0
 @export var capture_distance := 0.9
 @export var rotate_speed := 1.2  # rad/s de rotación manual del auto colgado
+## Si un obstáculo traba la carga y la grúa sigue de largo más de esta
+## distancia, el agarre cede y el imán la suelta (evita autos "colgados"
+## de postes o paredes mientras el imán se aleja).
+@export var snag_release_distance := 2.0
 
 ## Luz vertical entre el centro del imán y la cara de agarre del cuerpo
 ## (media altura del disco + aire).
@@ -145,8 +149,13 @@ func _physics_process(delta: float) -> void:
 
 	if carried:
 		var hang := Vector3(0, -(HANG_CLEARANCE + _grab_top(carried)), 0)
-		carried.global_transform = _blocked_motion(carried, Transform3D(
-				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * hang))
+		var target := Transform3D(
+				bob_basis * Basis(Vector3.UP, _rel_yaw), bob + bob_basis * hang)
+		carried.global_transform = _blocked_motion(carried, target)
+		# La carga quedó trabada lejos de donde debería colgar (un poste, una
+		# pared) y la grúa siguió de largo: el agarre cede y se suelta.
+		if carried.global_position.distance_to(target.origin) > snag_release_distance:
+			release()
 	elif energized:
 		_attract()
 
@@ -167,10 +176,23 @@ func _blocked_motion(body: RigidBody3D, target: Transform3D) -> Transform3D:
 			if node is RigidBody3D and node != body:
 				_motion_excluded.append(node.get_rid())
 	_motion_params.exclude_bodies = _motion_excluded
-	if PhysicsServer3D.body_test_motion(body.get_rid(), _motion_params, _motion_result):
-		return Transform3D(target.basis, body.global_position
-				+ _motion_params.motion * _motion_result.get_collision_safe_fraction())
-	return target
+	if not PhysicsServer3D.body_test_motion(body.get_rid(), _motion_params, _motion_result):
+		return target
+	# Chocó: avanza hasta el contacto y desliza el resto del trayecto por el
+	# plano del obstáculo, para rodearlo en vez de quedar clavado contra él.
+	var origin := body.global_position \
+			+ _motion_params.motion * _motion_result.get_collision_safe_fraction()
+	var remainder: Vector3 = _motion_params.motion \
+			* (1.0 - _motion_result.get_collision_safe_fraction())
+	var slide := remainder.slide(_motion_result.get_collision_normal())
+	if slide.length_squared() > 0.000001:
+		_motion_params.from = Transform3D(target.basis, origin)
+		_motion_params.motion = slide
+		if PhysicsServer3D.body_test_motion(body.get_rid(), _motion_params, _motion_result):
+			origin += slide * _motion_result.get_collision_safe_fraction()
+		else:
+			origin += slide
+	return Transform3D(target.basis, origin)
 
 
 func _attract() -> void:

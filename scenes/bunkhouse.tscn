@@ -18,46 +18,88 @@ script = ExtResource("1_cama")
 [node name="PisoCasilla" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 use_collision = true
-size = Vector3(3, 0.1, 3.4)
+size = Vector3(5, 0.1, 4.4)
 material = ExtResource("3_mgrey")
 
 [node name="ParedFondo" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 1.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45, 1.35, 0)
 use_collision = true
-size = Vector3(0.1, 2.4, 3.4)
-material = ExtResource("2_mdark")
+size = Vector3(0.15, 2.7, 4.4)
+material = ExtResource("3_mgrey")
+
+[node name="ParedSur" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 2.2)
+use_collision = true
+size = Vector3(5, 2.7, 0.15)
+material = ExtResource("3_mgrey")
+
+[node name="ParedNorteIzq" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.35, -2.2)
+use_collision = true
+size = Vector3(1.9, 2.7, 0.15)
+material = ExtResource("3_mgrey")
+
+[node name="ParedNorteDer" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.35, -2.2)
+use_collision = true
+size = Vector3(1.9, 2.7, 0.15)
+material = ExtResource("3_mgrey")
+
+[node name="BajoVentana" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -2.2)
+use_collision = true
+size = Vector3(1.2, 1.1, 0.15)
+material = ExtResource("3_mgrey")
+
+[node name="SobreVentana" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, -2.2)
+use_collision = true
+size = Vector3(1.2, 0.6, 0.15)
+material = ExtResource("3_mgrey")
+
+[node name="FrenteLadoNorte" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.35, -0.95)
+use_collision = true
+size = Vector3(0.15, 2.7, 2.5)
+material = ExtResource("3_mgrey")
+
+[node name="FrenteLadoSur" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.35, 1.85)
+use_collision = true
+size = Vector3(0.15, 2.7, 0.7)
+material = ExtResource("3_mgrey")
+
+[node name="DintelPuerta" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 2.4, 0.9)
+use_collision = true
+size = Vector3(0.15, 0.6, 1.2)
+material = ExtResource("3_mgrey")
 
 [node name="Techo" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.45, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.76, 0)
 use_collision = true
-size = Vector3(3.2, 0.1, 3.6)
+size = Vector3(5.3, 0.12, 4.7)
 material = ExtResource("2_mdark")
 
-[node name="Poste1" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45, 1.2, -1.6)
-use_collision = true
-size = Vector3(0.12, 2.4, 0.12)
-material = ExtResource("2_mdark")
-
-[node name="Poste2" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45, 1.2, 1.6)
-use_collision = true
-size = Vector3(0.12, 2.4, 0.12)
-material = ExtResource("2_mdark")
+[node name="Foquito" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
+light_color = Color(1, 0.88, 0.7, 1)
+light_energy = 0.9
+omni_range = 4.5
 
 [node name="Catre" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0.3, -1)
 use_collision = true
 size = Vector3(1, 0.4, 2.1)
 material = ExtResource("2_mdark")
 
 [node name="Colchon" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.56, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0.56, -1)
 size = Vector3(0.95, 0.14, 2)
 material = SubResource("mat_colchon")
 
 [node name="Estante" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 1.35, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.35, 1.2)
 script = ExtResource("4_estante")
 
 [node name="Tabla" type="CSGBox3D" parent="Estante"]
