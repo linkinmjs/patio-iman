@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://bfplgfarknots"]
 
-[ext_resource type="PackedScene" path="res://scenes/bunkhouse.tscn" id="e_bunk"]
+[ext_resource type="Material" path="res://assets/materials/greybox_grey_solid_2.tres" id="7_1j5xr"]
+[ext_resource type="PackedScene" uid="uid://dkotx67am36dc" path="res://scenes/bunkhouse.tscn" id="e_bunk"]
 [ext_resource type="PackedScene" path="res://scenes/car.tscn" id="e_car"]
 [ext_resource type="Script" uid="uid://dxxc0qg7uwcbo" path="res://scripts/day_night.gd" id="e_ciclo"]
+[ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="e_crane"]
 [ext_resource type="PackedScene" path="res://scenes/debug_menu.tscn" id="e_debug"]
 [ext_resource type="PackedScene" path="res://scenes/lamp_post.tscn" id="e_lamp"]
 [ext_resource type="PackedScene" path="res://scenes/rain.tscn" id="e_lluvia"]
@@ -18,12 +20,11 @@
 [ext_resource type="PackedScene" path="res://scenes/reception.tscn" id="e_recep"]
 [ext_resource type="PackedScene" path="res://scenes/shop_terminal.tscn" id="e_shop"]
 [ext_resource type="PackedScene" uid="uid://cljxmwbfpgeym" path="res://scenes/tractor_crane.tscn" id="e_tractor"]
-[ext_resource type="PackedScene" path="res://scenes/crane.tscn" id="e_crane"]
-[ext_resource type="Material" path="res://assets/materials/greybox_grey_grid.tres" id="g_grey"]
 [ext_resource type="Material" path="res://assets/materials/greybox_dark_grid.tres" id="g_dark"]
+[ext_resource type="Material" path="res://assets/materials/greybox_grey_grid.tres" id="g_grey"]
 [ext_resource type="Material" path="res://assets/materials/greybox_orange_grid.tres" id="g_orange"]
-[ext_resource type="Material" path="res://assets/materials/greybox_red_grid.tres" id="g_red"]
 [ext_resource type="Material" path="res://assets/materials/greybox_purple_solid.tres" id="g_purple"]
+[ext_resource type="Material" path="res://assets/materials/greybox_red_grid.tres" id="g_red"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.32, 0.45, 1)
@@ -73,6 +74,54 @@ size = Vector3(156.77338, 0.5, 133.47046)
 material = ExtResource("g_grey")
 
 [node name="Muros" type="Node3D" parent="." unique_id=925822763]
+
+[node name="R" type="CSGBox3D" parent="Muros" unique_id=1567553982]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.766464, 1.35, 27.421768)
+use_collision = true
+size = Vector3(5, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R2" type="CSGBox3D" parent="Muros" unique_id=928389233]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.719345, 1.35, 27.421768)
+use_collision = true
+size = Vector3(22.689941, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R5" type="CSGBox3D" parent="Muros" unique_id=447323312]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.044907, 1.35, -38.423996)
+use_collision = true
+size = Vector3(46.03882, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R6" type="CSGBox3D" parent="Muros" unique_id=1362757703]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.32534, 1.35, -38.423996)
+use_collision = true
+size = Vector3(27.20581, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R3" type="CSGBox3D" parent="Muros" unique_id=133306161]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 39.731613, 1.35, 16.135208)
+use_collision = true
+size = Vector3(25.008911, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R4" type="CSGBox3D" parent="Muros" unique_id=1699681885]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 39.731613, 1.35, -26.984436)
+use_collision = true
+size = Vector3(23.600647, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R7" type="CSGBox3D" parent="Muros" unique_id=479778770]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -37.986176, 1.35, -26.984436)
+use_collision = true
+size = Vector3(23.600647, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
+
+[node name="R8" type="CSGBox3D" parent="Muros" unique_id=1931069702]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -37.986176, 1.35, 0.22192383)
+use_collision = true
+size = Vector3(23.600647, 2.7, 0.15)
+material = ExtResource("7_1j5xr")
 
 [node name="M4_8" type="CSGBox3D" parent="Muros" unique_id=520858271]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 3.1, -30)
@@ -285,7 +334,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M7_9" type="CSGBox3D" parent="Muros" unique_id=1895413977]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.1, -18)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.1, -18)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -321,7 +370,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M8_9" type="CSGBox3D" parent="Muros" unique_id=702850249]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.1, -14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.1, -14)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -393,7 +442,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M9_9" type="CSGBox3D" parent="Muros" unique_id=596846522]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.1, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.1, -10)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -435,7 +484,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M10_9" type="CSGBox3D" parent="Muros" unique_id=934596665]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.1, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.1, -6)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -453,7 +502,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M10_14" type="CSGBox3D" parent="Muros" unique_id=1844144314]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 3.1, 5.707013)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 3.1, 8.332725)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -465,13 +514,13 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M10_16" type="CSGBox3D" parent="Muros" unique_id=27681015]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 3.1, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 3.1, -6)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M10_17" type="CSGBox3D" parent="Muros" unique_id=1231155062]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3.1, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.82166, 3.1, -6)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -507,13 +556,13 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M11_9" type="CSGBox3D" parent="Muros" unique_id=1934716595]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.1, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.1, -2)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M11_17" type="CSGBox3D" parent="Muros" unique_id=1520825003]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3.1, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.82166, 3.1, -2)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -525,7 +574,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M11_19" type="CSGBox3D" parent="Muros" unique_id=1698401337]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 3.1, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 3.1, -2)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -555,13 +604,13 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M12_9" type="CSGBox3D" parent="Muros" unique_id=835995506]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 3.1, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.057663, 3.1, 2)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M12_17" type="CSGBox3D" parent="Muros" unique_id=690542116]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3.1, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.32583, 3.1, 12.032565)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -633,13 +682,13 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M13_9" type="CSGBox3D" parent="Muros" unique_id=2025185781]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2576246, 3.1, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.993443, 3.1, 10)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="M13_17" type="CSGBox3D" parent="Muros" unique_id=918776520]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3.1, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.32583, 3.1, 16.032566)
 use_collision = true
 size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
@@ -789,7 +838,7 @@ size = Vector3(4, 6.2, 4)
 material = ExtResource("g_dark")
 
 [node name="Escotilla1" type="CSGBox3D" parent="." unique_id=1172416228]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.09, 14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.452072, 0.09, 14)
 size = Vector3(2.8, 0.18, 2.8)
 material = ExtResource("g_red")
 
@@ -799,7 +848,7 @@ size = Vector3(2.8, 0.18, 2.8)
 material = ExtResource("g_red")
 
 [node name="Recepcion" parent="." unique_id=1708896900 instance=ExtResource("e_recep")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.562138, 0, 18.860779)
 
 [node name="Tienda" parent="." unique_id=1206511620 instance=ExtResource("e_shop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0, 42)
@@ -823,25 +872,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -14)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -2)
 
 [node name="Farol4" parent="." unique_id=455418111 instance=ExtResource("e_lamp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 26)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.773361, 0, 21.461914)
 
 [node name="Farol5" parent="." unique_id=126356029 instance=ExtResource("e_lamp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 26)
 
 [node name="Casilla" parent="." unique_id=2029840405 instance=ExtResource("e_bunk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.264633, 0, 10.627037)
 
 [node name="GruaMovil" parent="." unique_id=85085198 instance=ExtResource("e_tractor")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.012015, 0.5, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.771582, 0.5, 4.0112786)
 
 [node name="Auto1" parent="." unique_id=1175882215 instance=ExtResource("e_car")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.5, 14)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.688961, 0.5, 14)
 
 [node name="ZonaCarga" parent="." unique_id=2016589102 instance=ExtResource("e_load")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 30)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.7356644, 0, 23.852478)
 
-[node name="GruaFija" parent="." instance=ExtResource("e_crane")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6, 0, -2)
+[node name="GruaFija" parent="." unique_id=889023673 instance=ExtResource("e_crane")]
+transform = Transform3D(1.1781307, 0, 0, 0, 1, 0, 0, 0, 1, 6.2206798, 0, -2)
 
 [node name="Galpon" type="Node3D" parent="." unique_id=1715189118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 0, -14)
@@ -887,6 +936,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 42)
 [node name="Porton" type="CSGBox3D" parent="." unique_id=1341575280]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 0.09, -2)
 size = Vector3(2.8, 0.18, 2.8)
+material = ExtResource("g_red")
+
+[node name="Calle" type="CSGBox3D" parent="." unique_id=1090889807]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6286163, 0.09, 36.610832)
+size = Vector3(157, 0.18, 6.7618165)
 material = ExtResource("g_red")
 
 [node name="Player" parent="." unique_id=1800384099 instance=ExtResource("e_player")]

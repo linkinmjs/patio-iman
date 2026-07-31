@@ -1,8 +1,10 @@
 extends Node3D
-## Grúa pórtico del patio. Se opera desde la consola (E).
-## En modo grúa: WASD mueve puente (W/S) y carro (A/D), Q/E baja/sube el imán,
-## Z/X rota el auto colgado, RMB modo precisión, rueda del mouse zoom,
-## Tab vuelve al modo a pie.
+## Grúa pórtico del patio. Se opera desde la consola (E) SIN cambiar de
+## cámara: el operario queda parado frente al monitor de la consola, que
+## muestra una vista cenital desde el carro (donde nace el cable del imán).
+## En modo grúa: W/S mueve el puente, A/D el carro, Q/E baja/sube el imán,
+## Z/X rota el auto colgado, RMB precisión, rueda zoom del monitor,
+## Tab suelta los controles. La mirada sigue siendo del jugador.
 
 @export_group("Velocidades")
 @export var bridge_speed := 6.0
@@ -15,16 +17,17 @@ extends Node3D
 @export var trolley_x_range := Vector2(-12.0, 12.0)
 @export var bridge_z_range := Vector2(-22.0, 22.0)
 
-@export_group("Cámara")
-@export var mouse_sensitivity := 0.0025
-@export var zoom_range := Vector2(4.0, 14.0)
+@export_group("Monitor")
+## FOV de la cámara cenital (rueda del mouse): x = más cerca, y = más lejos.
+@export var zoom_range := Vector2(30.0, 90.0)
 
 @onready var bridge: Node3D = $Puente
 @onready var trolley: Node3D = $Puente/Carro
 @onready var hanging: HangingMagnet = $Puente/Carro/HangingMagnet
-@onready var cam_yaw: Node3D = $Puente/Carro/CamYaw
-@onready var cam_pitch: Node3D = $Puente/Carro/CamYaw/CamPitch
-@onready var camera: Camera3D = $Puente/Carro/CamYaw/CamPitch/Camera3D
+@onready var cam_mount: Marker3D = $Puente/Carro/VistaCenitalMount
+@onready var overhead_viewport: SubViewport = $VistaCenital
+@onready var overhead_cam: Camera3D = $VistaCenital/CamaraCenital
+@onready var screen_mesh: MeshInstance3D = $Consola/Monitor/Imagen
 @onready var console_area: Area3D = $Consola/Area3D
 @onready var console_label: Label3D = $Consola/Label3D
 @onready var hud: CanvasLayer = $HUD
@@ -34,32 +37,44 @@ var active := false
 var _player: Player = null
 var _player_near := false
 var _velocity := Vector3.ZERO  # x = carro, y = imán, z = puente
-var _zoom := 9.0
+var _zoom := 60.0
 
 
 func _ready() -> void:
 	console_area.body_entered.connect(_on_console_body_entered)
 	console_area.body_exited.connect(_on_console_body_exited)
 	console_label.visible = false
+	# El monitor muestra el feed de la cámara cenital; unshaded para que se
+	# lea como pantalla encendida también de noche.
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_texture = overhead_viewport.get_texture()
+	screen_mesh.material_override = mat
+	overhead_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not active:
 		return
-	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		cam_yaw.rotate_y(-event.relative.x * mouse_sensitivity)
-		cam_pitch.rotation.x = clampf(
-				cam_pitch.rotation.x - event.relative.y * mouse_sensitivity, -1.4, 0.4)
-	elif event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_zoom = maxf(_zoom - 1.0, zoom_range.x)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_zoom = minf(_zoom + 1.0, zoom_range.y)
+	if event is InputEventMouseButton:
+		# La rueda emite un par pressed/released por muesca: sin este filtro
+		# cada muesca aplicaría el paso de zoom dos veces.
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+			_zoom = maxf(_zoom - 10.0, zoom_range.x)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+			_zoom = minf(_zoom + 10.0, zoom_range.y)
 		elif event.pressed and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func _physics_process(delta: float) -> void:
+	# La cámara cenital vive dentro del SubViewport (fuera del árbol 3D de la
+	# grúa), así que se le copia la pose del carro a mano: mirando recto hacia
+	# abajo, con el norte (−Z) hacia arriba de la pantalla — así W sube el
+	# puente en el monitor y A/D mueven el carro a izquierda/derecha.
+	overhead_cam.global_transform = Transform3D(
+			Basis(Vector3.RIGHT, Vector3.FORWARD, Vector3.UP),
+			cam_mount.global_position)
 	if active:
 		_process_controls(delta)
 	elif _player_near and not GameState.is_player_busy() \
@@ -97,7 +112,7 @@ func _process_controls(delta: float) -> void:
 	bridge.position.z = clampf(
 			bridge.position.z + _velocity.z * delta, bridge_z_range.x, bridge_z_range.y)
 
-	camera.position.z = lerpf(camera.position.z, _zoom, 8.0 * delta)
+	overhead_cam.fov = lerpf(overhead_cam.fov, _zoom, 8.0 * delta)
 
 
 func _enter() -> void:
@@ -106,8 +121,11 @@ func _enter() -> void:
 	console_label.visible = false
 	hud.visible = true
 	_velocity = Vector3.ZERO
+	overhead_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_player.set_control_enabled(false)
-	camera.current = true
+	# El cuerpo queda quieto en la consola pero la mirada sigue siendo suya:
+	# se reactiva solo el input de cámara del player (mouse), no el andar.
+	_player.set_process_unhandled_input(true)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
@@ -116,6 +134,8 @@ func _exit() -> void:
 	remove_from_group("vehiculo_activo")
 	console_label.visible = _player_near
 	hud.visible = false
+	# El monitor queda congelado en el último cuadro (pantalla "en espera").
+	overhead_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	_player.set_control_enabled(true)
 
 

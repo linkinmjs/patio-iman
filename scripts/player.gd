@@ -108,6 +108,11 @@ func set_control_enabled(enabled: bool) -> void:
 	else:
 		if _carried:
 			_drop(0.0)
+		if _gun_out:
+			# Sin esto el arma queda dibujada (y el FOV de apuntado clavado)
+			# tapando la vista en la consola de la grúa, diálogos y cinemáticas,
+			# porque _update_gun deja de correr junto con el physics process.
+			_set_gun_out(false)
 		_loot_target = null
 		_loot_progress = 0.0
 		_aim = false

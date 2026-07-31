@@ -1,9 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3 uid="uid://dkotx67am36dc"]
 
-[ext_resource type="Script" path="res://scripts/bed.gd" id="1_cama"]
+[ext_resource type="Script" uid="uid://tdoxkicousn2" path="res://scripts/bed.gd" id="1_cama"]
 [ext_resource type="Material" path="res://assets/materials/greybox_dark_solid.tres" id="2_mdark"]
 [ext_resource type="Material" path="res://assets/materials/greybox_grey_solid_2.tres" id="3_mgrey"]
-[ext_resource type="Script" path="res://scripts/trophy_shelf.gd" id="4_estante"]
+[ext_resource type="Script" uid="uid://du7j37hdfftry" path="res://scripts/trophy_shelf.gd" id="4_estante"]
 
 [sub_resource type="StandardMaterial3D" id="mat_colchon"]
 albedo_color = Color(0.55, 0.52, 0.42, 1)
@@ -12,126 +12,126 @@ roughness = 0.9
 [sub_resource type="SphereShape3D" id="shape_cama"]
 radius = 2.0
 
-[node name="Casilla" type="Node3D"]
+[node name="Casilla" type="Node3D" unique_id=1932983121]
 script = ExtResource("1_cama")
 
-[node name="PisoCasilla" type="CSGBox3D" parent="."]
+[node name="PisoCasilla" type="CSGBox3D" parent="." unique_id=1784466156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 use_collision = true
 size = Vector3(5, 0.1, 4.4)
 material = ExtResource("3_mgrey")
 
-[node name="ParedFondo" type="CSGBox3D" parent="."]
+[node name="ParedFondo" type="CSGBox3D" parent="." unique_id=2785822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.45, 1.35, 0)
 use_collision = true
 size = Vector3(0.15, 2.7, 4.4)
 material = ExtResource("3_mgrey")
 
-[node name="ParedSur" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 2.2)
+[node name="ParedSur" type="CSGBox3D" parent="." unique_id=164199508]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -2.1735618)
 use_collision = true
 size = Vector3(5, 2.7, 0.15)
 material = ExtResource("3_mgrey")
 
-[node name="ParedNorteIzq" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.35, -2.2)
+[node name="ParedNorteIzq" type="CSGBox3D" parent="." unique_id=545857468]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.55, 1.35, 2.2218266)
 use_collision = true
 size = Vector3(1.9, 2.7, 0.15)
 material = ExtResource("3_mgrey")
 
-[node name="ParedNorteDer" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.35, -2.2)
+[node name="ParedNorteDer" type="CSGBox3D" parent="." unique_id=1333396363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 1.35, 2.2218266)
 use_collision = true
 size = Vector3(1.9, 2.7, 0.15)
 material = ExtResource("3_mgrey")
 
-[node name="BajoVentana" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -2.2)
+[node name="BajoVentana" type="CSGBox3D" parent="." unique_id=740474785]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 2.2218266)
 use_collision = true
 size = Vector3(1.2, 1.1, 0.15)
 material = ExtResource("3_mgrey")
 
-[node name="SobreVentana" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, -2.2)
+[node name="SobreVentana" type="CSGBox3D" parent="." unique_id=216236542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 2.2218266)
 use_collision = true
 size = Vector3(1.2, 0.6, 0.15)
 material = ExtResource("3_mgrey")
 
-[node name="FrenteLadoNorte" type="CSGBox3D" parent="."]
+[node name="FrenteLadoNorte" type="CSGBox3D" parent="." unique_id=37391817]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.35, -0.95)
 use_collision = true
 size = Vector3(0.15, 2.7, 2.5)
 material = ExtResource("3_mgrey")
 
-[node name="FrenteLadoSur" type="CSGBox3D" parent="."]
+[node name="FrenteLadoSur" type="CSGBox3D" parent="." unique_id=1467779562]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 1.35, 1.85)
 use_collision = true
 size = Vector3(0.15, 2.7, 0.7)
 material = ExtResource("3_mgrey")
 
-[node name="DintelPuerta" type="CSGBox3D" parent="."]
+[node name="DintelPuerta" type="CSGBox3D" parent="." unique_id=562541148]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 2.4, 0.9)
 use_collision = true
 size = Vector3(0.15, 0.6, 1.2)
 material = ExtResource("3_mgrey")
 
-[node name="Techo" type="CSGBox3D" parent="."]
+[node name="Techo" type="CSGBox3D" parent="." unique_id=243260072]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.76, 0)
 use_collision = true
 size = Vector3(5.3, 0.12, 4.7)
 material = ExtResource("2_mdark")
 
-[node name="Foquito" type="OmniLight3D" parent="."]
+[node name="Foquito" type="OmniLight3D" parent="." unique_id=1814051667]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
 light_color = Color(1, 0.88, 0.7, 1)
 light_energy = 0.9
 omni_range = 4.5
 
-[node name="Catre" type="CSGBox3D" parent="."]
+[node name="Catre" type="CSGBox3D" parent="." unique_id=1363044655]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0.3, -1)
 use_collision = true
 size = Vector3(1, 0.4, 2.1)
 material = ExtResource("2_mdark")
 
-[node name="Colchon" type="CSGBox3D" parent="."]
+[node name="Colchon" type="CSGBox3D" parent="." unique_id=1707564399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 0.56, -1)
 size = Vector3(0.95, 0.14, 2)
 material = SubResource("mat_colchon")
 
-[node name="Estante" type="Node3D" parent="."]
+[node name="Estante" type="Node3D" parent="." unique_id=1635464869]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.35, 1.2)
 script = ExtResource("4_estante")
 
-[node name="Tabla" type="CSGBox3D" parent="Estante"]
+[node name="Tabla" type="CSGBox3D" parent="Estante" unique_id=1099366850]
 size = Vector3(0.3, 0.06, 1.6)
 material = ExtResource("2_mdark")
 
-[node name="Nombre" type="Label3D" parent="Estante"]
+[node name="Nombre" type="Label3D" parent="Estante" unique_id=1376605682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.45, 0)
 visible = false
-billboard = 1
 visibility_range_end = 8.0
+billboard = 1
 font_size = 28
 outline_size = 6
 
-[node name="Label3D" type="Label3D" parent="."]
+[node name="Label3D" type="Label3D" parent="." unique_id=1356029609]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
 billboard = 1
 text = "Dormir [E]"
 font_size = 44
 outline_size = 8
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="Area3D" type="Area3D" parent="." unique_id=895870909]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=248818766]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("shape_cama")
 
-[node name="Pantalla" type="CanvasLayer" parent="."]
-visible = false
+[node name="Pantalla" type="CanvasLayer" parent="." unique_id=635948832]
 layer = 5
+visible = false
 
-[node name="Fade" type="ColorRect" parent="Pantalla"]
+[node name="Fade" type="ColorRect" parent="Pantalla" unique_id=343340192]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -139,8 +139,8 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0)
 
-[node name="Texto" type="Label" parent="Pantalla/Fade"]
-anchors_preset = 15
+[node name="Texto" type="Label" parent="Pantalla/Fade" unique_id=288542336]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
